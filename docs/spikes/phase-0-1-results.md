@@ -5,12 +5,12 @@
 **Dependency installation:** none  
 **Execution/benchmarking:** none
 
-## 1. Executive recommendation
+## 1. Accepted outcome
 
 - **Backend: Fastify on Node.js/TypeScript.** It best preserves an explicit, framework-independent modular-monolith design with less ceremony and fewer framework-specific concepts. Akatsuki must supply a small, documented composition/auth/error convention layer.
 - **ORM: Drizzle with PostgreSQL.** Its SQL proximity and transparent access to PostgreSQL constraints, tenant-aware composite keys, transactions, and specialized ledger SQL fit strict financial and isolation requirements better than a higher abstraction.
 
-These are recommendations from a code-shape/architecture spike, not measured runtime results. Accept them if the team agrees with the weighting and has compatible skills; otherwise authorize the narrow executable follow-up described below before changing the ADRs to `Accepted`.
+The project accepted these directions in [ADR 0002](../adr/0002-backend-runtime.md) and [ADR 0005](../adr/0005-orm-and-migrations.md). Acceptance is based on architectural fit and the recorded code-shape comparison, not measured runtime results. Exact versions and executable integration behavior must still be confirmed before production scaffolding.
 
 ## 2. Backend runtime comparison
 
@@ -69,16 +69,16 @@ Prisma remains attractive for schema readability, generated-client consistency, 
 6. **Team fit:** unfamiliarity with Fastify/Drizzle could erase theoretical simplicity; training and ownership must be assessed.
 7. **Codex guardrails:** code generation can replicate a flawed pattern quickly. Public module APIs, lint/architecture rules, migrations, and security tests require human review.
 
-## 5. ADR changes to accept
+## 5. ADR disposition
 
-After architecture/team review, update—not silently rewrite—the following proposed decisions:
+Architecture review produced the following disposition:
 
-- **ADR 0002:** accept Node.js/TypeScript with Fastify; record that Fastify is an interface adapter, application/domain layers are framework-independent, and workers are separate.
-- **ADR 0005:** accept Drizzle with PostgreSQL; require module-owned repositories/schema, reviewed SQL migrations, parameterized raw SQL, and expand/migrate/contract.
+- **ADR 0002 — Accepted:** Node.js/TypeScript with Fastify; Fastify is an interface adapter, application/domain layers are framework-independent, and workers remain separate.
+- **ADR 0005 — Accepted:** Drizzle with PostgreSQL; module-owned repositories/schema, reviewed SQL migrations, parameterized raw SQL, and expand/migrate/contract are required.
 - **ADR 0011:** retain explicit tenant context and mandatory `tenant_id`; acceptance of RLS remains conditional on an executable Drizzle/RLS validation.
 - **ADR 0001:** pnpm remains proposed but was not exercised because dependency/workspace setup was outside this spike.
 
-Record approval date, reviewers, exact implementation versions when known, and a link to this result. Do not mark ADRs `Accepted` solely because this document recommends them; acceptance is a project governance action.
+The accepted ADRs record the approval date and link to this evidence. Exact implementation versions remain intentionally open until production scaffolding preparation.
 
 ## 6. Open questions
 
@@ -91,4 +91,4 @@ Record approval date, reviewers, exact implementation versions when known, and a
 
 ## 7. Recommended next step
 
-Hold an architecture review and provisionally accept Fastify and Drizzle. If executable evidence is required, authorize dependency installation for one disposable follow-up only: compile both backend sketches, run one injected route test, run Drizzle and Prisma migrations against disposable PostgreSQL, post concurrent tenant-scoped ledger transactions, inspect generated SQL, and verify rollback/RLS behavior. Delete or freeze those artifacts after recording results; do not turn them into production scaffolding.
+Before production scaffolding, confirm exact Node.js, Fastify, Drizzle, PostgreSQL driver, migration, validation, and testing versions. Then run a narrow executable foundation validation against disposable PostgreSQL: verify tenant-scoped repositories, composite keys, reviewed migrations, transactions/concurrency, ledger constraints, rollback behavior, and the future RLS approach. This validation must not become production scaffolding until its results are reviewed.
