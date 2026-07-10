@@ -1,0 +1,29 @@
+// Investigation-only sketch. Not a production schema and not intended to generate.
+model LedgerTransaction {
+  tenantId String   @map("tenant_id") @db.Uuid
+  id       String   @db.Uuid
+  currency String
+  postedAt DateTime @map("posted_at") @db.Timestamptz
+  entries  LedgerEntry[]
+
+  @@id([tenantId, id])
+  @@index([tenantId, postedAt])
+  @@map("ledger_transactions")
+}
+
+model LedgerEntry {
+  tenantId     String             @map("tenant_id") @db.Uuid
+  id           String             @db.Uuid
+  transactionId String            @map("transaction_id") @db.Uuid
+  accountId    String             @map("account_id") @db.Uuid
+  direction    String
+  amount       Decimal            @db.Decimal(30, 8)
+  transaction  LedgerTransaction  @relation(fields: [tenantId, transactionId], references: [tenantId, id])
+
+  @@id([tenantId, id])
+  @@map("ledger_entries")
+}
+
+// Application code would use prisma.$transaction([...]) with explicit tenantId.
+// CHECK constraints, a balance assertion, RLS policies, and specialized locks require
+// reviewed SQL migrations and/or prisma.$queryRaw with parameterized tagged templates.
