@@ -75,6 +75,7 @@ The conditional internal MVP document is an inactive template, not authorization
 | Operations/recovery | `docs/operations/`, backup plan | Required plans; named hosting/RPO/RTO/evidence pending |
 | Phase 1 implementation shape | `docs/phase-1-blueprint/` | Conditional future blueprint only |
 | Phase 1 foundation contracts | `docs/phase-1-foundation/` | `FND-001` boundaries, `FND-002` scaffold plan, `FND-003` environment/commands, and `FND-004` runtime contract; proposed documentation only, not an approved scaffold or Phase 1 GO |
+| Root workspace scaffold | `apps/*`, `packages/*`, `pnpm-workspace.yaml`, `docs/phase-1-foundation/05-root-workspace-scaffold-result.md` | Approved placeholder step only: README-only locations, no apps/packages, dependencies, runtime, or broader Phase 1 GO |
 | Phase 1 work items | `docs/phase-1-tickets/` | 46 future tickets; none authorized |
 | Sprint sequence/rules | `docs/phase-1-sprints/` | Sprint 0–10 map, execution rules, stop conditions |
 | Future AI Builder | `docs/future/` | Post-MVP only; no integration or Phase 1 feature |

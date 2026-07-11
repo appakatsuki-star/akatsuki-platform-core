@@ -1,4 +1,6 @@
 packages:
-  - validation/runtime-check
+  - apps/*
+  - packages/*
+  - validation/*
 
 onlyBuiltDependencies: []
