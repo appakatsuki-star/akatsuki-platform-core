@@ -1,41 +1,44 @@
-# Next Codex Task — Auth Schema Planning only
+# Next Codex Task — DB Package Current State Audit only
 
 ## Task name
 
-Start Phase 1 / Sprint 2 — Auth Schema Planning only.
+Start Phase 1 / Sprint 2 — DB Package Current State Audit only.
 
 ## Approval
 
-The founder approves creating one Auth Schema Planning document only.
+The founder approves auditing the current packages/db state only.
 
 This approval does not approve:
-- database implementation
-- migrations
-- Docker
-- Drizzle configuration
-- package/db creation
-- authentication routes
-- password hashing implementation
-- sessions implementation
-- frontend login UI
-- production users
-- real secrets
-- provider integration
+- adding new database implementation
+- changing Drizzle schema
+- generating migrations
+- running Docker
+- connecting to PostgreSQL
+- changing auth logic
+- adding provider integration
 - wallet/ledger
 - orders
 - payments
+- frontend UI
+- production users
+- real secrets
 - production deployment
 
-## Current verified state
+## Current situation
 
-- API shell exists and is verified.
-- Super Admin read-only route skeletons exist and are hardened.
-- AGENTS.md exists and must be followed.
-- No real database/auth/provider/ledger/order code should be added by this task.
+The previous DB package scaffold task is outdated.
+
+The repository already appears to contain:
+- packages/db
+- Drizzle-related files
+- Auth schema-related work
+
+Do not revert or delete newer DB work.
+Do not convert packages/db back to an empty placeholder.
 
 ## Goal
 
-Create a precise conceptual Auth schema plan before any database or authentication implementation.
+Audit the current DB package state and create a clear report describing what exists, whether it is safe, and what the next narrow step should be.
 
 ## Read first
 
@@ -43,163 +46,149 @@ Read:
 
 - AGENTS.md
 - docs/00-current-source-of-truth.md
+- docs/codex-next-task.md
+- docs/phase-1-auth/
+- docs/phase-1-db/ if it exists
+- docs/phase-1-foundation/
 - docs/phase-1-blueprint/07-database-schema-mvp-blueprint.md
 - docs/phase-1-blueprint/12-security-rbac-audit-blueprint.md
-- docs/phase-1-tickets/03-auth-session-rbac-tickets.md
-- docs/phase-1-sprints/04-sprint-2-auth-session-rbac.md
-- docs/security/05-auth-session-security-checklist.md
 - docs/security/03-database-hardening-checklist.md
+- docs/security/05-auth-session-security-checklist.md
 - docs/adr/
+- packages/db/
+- package.json
+- pnpm-workspace.yaml
+- pnpm-lock.yaml if it exists
 
 ## Create
 
 Create:
 
-- docs/phase-1-auth/README.md
-- docs/phase-1-auth/01-auth-schema-concept-plan.md
+- docs/phase-1-db/02-db-package-current-state-audit.md
 
-## Document requirements
+## Audit requirements
 
-The concept plan must include:
+The audit document must include:
 
-1. Purpose:
-Explain that this is conceptual only, not SQL, Drizzle, schema files, or migrations.
+1. Current DB package inventory:
+List all important files currently inside packages/db.
 
-2. Core entities:
-Define:
+2. Package metadata:
+Report:
+- package name
+- private status
+- dependencies
+- devDependencies
+- scripts
+- whether package.json exists
+
+3. Drizzle status:
+Report whether there is:
+- Drizzle dependency
+- Drizzle config
+- schema files
+- migrations folder
+- migration journal
+- seed files
+- connection/runtime code
+
+4. Auth schema status:
+Report whether schema currently includes concepts for:
 - users
-- tenant_memberships
+- tenant memberships
 - roles
 - permissions
-- role_permissions
-- user_sessions
-- login_attempts
-- auth audit relationships
+- role permissions
+- sessions
+- login attempts
+- audit/auth relationship
 
-3. Conceptual fields:
-For each entity, describe conceptual fields only.
-Do not write TypeScript, SQL, or Drizzle code.
+5. Safety review:
+Check whether current DB package:
+- uses real secrets
+- connects to a real database
+- requires Docker
+- includes production credentials
+- includes real users
+- mutates data
+- includes provider/wallet/ledger/order/payment logic
 
-4. Tenant isolation:
-Explain:
-- users are global identities
-- tenant_memberships define access to a tenant
-- tenant-scoped operations require active membership
-- Super Admin access is separate from Tenant Admin access
-- customer users must not be mixed with platform operators unless separately approved
+6. Boundary review:
+Check:
+- packages/db does not import from apps/api unless explicitly intended
+- packages/db does not import from validation/
+- packages/db does not import from spikes/
+- apps/api does not unexpectedly depend on packages/db unless approved
+- no frontend code depends on packages/db
 
-5. Session model:
-Define:
-- opaque session tokens
-- token digest stored only
-- HTTP-only cookie later
-- expiry
-- revocation
-- rotation recommendation
-- no JWT as primary session unless separately approved
+7. Commands/checks:
+If existing scripts allow safe checks without Docker and without installing new dependencies, run them.
+If not safe or not available, do not invent new commands.
 
-6. Password and login security:
-Define:
-- password hash only
-- no plaintext passwords
-- hashing algorithm selected later
-- login attempt logging
-- lockout/rate-limit concept
-- no email/SMS sending yet
-- no real users yet
+Always run:
+- git diff --check
+- git status --short
 
-7. RBAC model:
-Define:
-- roles as named bundles
-- permissions as stable keys
-- role_permissions link roles to permissions
-- tenant_membership references role
-- Super Admin permissions must be isolated
-- no dynamic permission strings from client
+8. Decision:
+Classify current DB package as one of:
+- safe to keep as-is
+- safe with conditions
+- needs cleanup before continuing
+- unsafe and must stop
 
-8. Audit relationship:
-Explain future audit needs for:
-- login success/failure
-- session revoke
-- password change
-- role assignment
-- membership status change
-- permission change
+9. Next safe step:
+Recommend exactly one next step:
+- DB package cleanup only
+- DB schema approval gate
+- Drizzle/schema typecheck only
+- Migration planning only
+- Pause and ask founder
 
-9. Explicit exclusions:
-State that this task does not include:
-- SQL
-- Drizzle
-- migrations
-- Docker
-- PostgreSQL runtime
-- auth routes
-- password hashing code
-- session cookies implementation
-- frontend login UI
-- OAuth/social login/SSO
-- provider/wallet/ledger/order/payment
-- production users or secrets
-
-10. Next recommendation:
-Recommend exactly one next safe step:
-- DB package scaffold only
-or
-- Database schema shell planning
-or
-- Auth schema approval gate
-
-Do not recommend starting full Auth.
+Do not recommend full Auth implementation.
 
 ## Allowed changes
 
 Allowed:
-- create docs/phase-1-auth/README.md
-- create docs/phase-1-auth/01-auth-schema-concept-plan.md
+- create docs/phase-1-db/02-db-package-current-state-audit.md
 - update docs/00-current-source-of-truth.md only if needed
+- update docs/phase-1-db/README.md only if needed
 
 ## Blocked
 
 Do not:
 - install dependencies
+- run pnpm install
 - modify pnpm-lock.yaml
-- modify package.json
+- modify package.json files
 - modify pnpm-workspace.yaml
 - run Docker
-- create database code
+- connect to PostgreSQL
 - create migrations
-- create Drizzle code
-- create auth code
-- modify apps/api code
-- add frontend code
+- generate migrations
+- modify schema files
+- modify Drizzle config
+- modify app code
+- create auth routes
 - add provider/ledger/order/payment/UI code
 - add secrets
 - commit
 - push
-
-## Checks after changes
-
-Run:
-
-- git diff --check
-- git status --short
 
 ## Report in Arabic
 
 Report:
 - files created
 - files updated
-- conceptual auth entities
-- tenant isolation model
-- session model
-- RBAC model
-- audit relationship
-- explicit exclusions
-- exact next recommended step
+- current packages/db inventory
+- Drizzle status
+- Auth schema status
+- safety review result
+- boundary review result
 - commands run
 - whether git diff --check passed
 - whether working tree has changes
 - whether dependencies/lockfiles changed
+- exact next recommended step
 
 Do not commit.
 Do not push.
