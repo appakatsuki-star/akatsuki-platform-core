@@ -4,6 +4,11 @@
   "private": true,
   "packageManager": "pnpm@11.11.0",
   "scripts": {
+    "api:build": "pnpm --filter @akatsuki/api build",
+    "api:dev": "pnpm --filter @akatsuki/api dev",
+    "api:start": "pnpm --filter @akatsuki/api start",
+    "api:test": "pnpm --filter @akatsuki/api test",
+    "api:typecheck": "pnpm --filter @akatsuki/api typecheck",
     "validation:check": "pnpm --filter @akatsuki/runtime-check check",
     "validation:test": "pnpm --filter @akatsuki/runtime-check test",
     "validation:start": "pnpm --filter @akatsuki/runtime-check start",

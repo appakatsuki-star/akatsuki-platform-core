@@ -1,11 +1,21 @@
-# API Application Placeholder
+# API Foundation Shell
 
-**Status:** Placeholder only. No production code or dependencies exist yet.
+**Status:** Internal foundation shell only. Not approved for production or public access.
 
-## Future responsibility
+## Current responsibility
 
-This app will be the backend HTTP composition root. After separate approval, it may assemble typed configuration, safe health endpoints, trusted request context, error mapping, observability adapters, and approved module use cases.
+This workspace is the backend HTTP composition root. Its current scope is limited to dependency-free liveness/readiness endpoints, safe request IDs, a stable error envelope, redacted structured logging, and graceful process lifecycle behavior.
+
+## Commands
+
+- `pnpm --filter @akatsuki/api dev`
+- `pnpm --filter @akatsuki/api typecheck`
+- `pnpm --filter @akatsuki/api test`
+- `pnpm --filter @akatsuki/api build`
+- `pnpm --filter @akatsuki/api start` (requires an existing build and explicit safe environment configuration)
+
+Tests use Fastify injection and do not open a network port.
 
 ## Not allowed yet
 
-No source directory, Fastify app, route, middleware, database access, authentication, tenant logic, provider/payment integration, order or ledger behavior, secret, dependency, build configuration, or runtime command may be added under the current approval.
+No database, migration, authentication, session, RBAC, tenant business logic, provider/payment integration, catalog, pricing, order, wallet/ledger, worker, frontend/UI, AI, secret, real customer data, public access, or production deployment belongs in this shell.
