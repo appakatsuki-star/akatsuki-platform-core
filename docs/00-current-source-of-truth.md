@@ -83,7 +83,7 @@ The conditional internal MVP document is an inactive template, not authorization
 | API foundation shell | `apps/api/`, `docs/phase-1-foundation/10-api-shell-implementation-result.md` | Internal health/context/error/logging shell only; no business code or production/public approval |
 | API shell hardening | `docs/phase-1-foundation/11-api-shell-hardening-result.md` | Focused logging/error/request-ID/import-boundary hardening; no broader Phase 1 or production approval |
 | Auth/database entry | `docs/phase-1-foundation/12-auth-database-entry-plan.md` | Recommends Auth schema planning only; no database, migration, Drizzle, auth code, Docker, or implementation approval |
-| Auth schema planning and gate | `docs/phase-1-auth/` | Concept coverage is complete, but the approval gate is **FAIL** due to unresolved schema-shaping decisions; next step is revising the concept plan, not DB/Auth implementation |
+| Auth schema planning and gate | `docs/phase-1-auth/` | First gate remains **FAIL**; the concept plan is now revised to address its gaps and awaits a new Auth schema approval gate; no DB/Auth implementation is approved |
 | Phase 1 work items | `docs/phase-1-tickets/` | 46 future tickets; none authorized |
 | Sprint sequence/rules | `docs/phase-1-sprints/` | Sprint 0–10 map, execution rules, stop conditions |
 | Future AI Builder | `docs/future/` | Post-MVP only; no integration or Phase 1 feature |
