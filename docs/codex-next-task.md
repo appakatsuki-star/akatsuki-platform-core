@@ -1,15 +1,14 @@
-# Next Codex Task — DB Schema Approval Gate only
+# Next Codex Task — DB Schema Cleanup only
 
 ## Task name
 
-Start Phase 1 / Sprint 2 — DB Schema Approval Gate only.
+Start Phase 1 / Sprint 2 — DB Schema Cleanup only.
 
 ## Approval
 
-The founder approves reviewing the existing packages/db Auth schema only.
+The founder approves a narrow DB schema cleanup only.
 
 This approval does not approve:
-- modifying schema files
 - generating migrations
 - running Docker
 - connecting to PostgreSQL
@@ -29,15 +28,15 @@ This approval does not approve:
 ## Current verified state
 
 - AGENTS.md exists and must be followed.
-- API shell exists and is verified.
-- Super Admin read-only route skeletons exist and are hardened.
-- packages/db exists.
+- packages/db exists and typechecks.
 - DB current state audit classified packages/db as safe with conditions.
+- DB schema approval gate result: needs cleanup before continuing.
+- The main identified gap is that user_sessions can reference a tenant_membership belonging to a different user.
 - No migrations, connection code, Docker runtime, or real secrets should be added by this task.
 
 ## Goal
 
-Review the existing packages/db Auth schema against the Auth concept plan and database/security requirements, then create an approval gate document deciding whether it is ready for the next narrow database step.
+Fix only the DB schema integrity gap where a user session could reference a tenant membership that belongs to another user.
 
 ## Read first
 
@@ -47,89 +46,58 @@ Read:
 - docs/00-current-source-of-truth.md
 - docs/codex-next-task.md
 - docs/phase-1-db/02-db-package-current-state-audit.md
+- docs/phase-1-db/03-db-schema-approval-gate.md
 - docs/phase-1-auth/01-auth-schema-concept-plan.md
 - docs/phase-1-auth/04-auth-schema-approval-gate-rerun.md
-- docs/phase-1-blueprint/07-database-schema-mvp-blueprint.md
-- docs/phase-1-blueprint/12-security-rbac-audit-blueprint.md
 - docs/security/03-database-hardening-checklist.md
 - docs/security/05-auth-session-security-checklist.md
-- docs/adr/
 - packages/db/
 
-## Create
+## Required cleanup
+
+Review the existing packages/db auth schema and apply the smallest safe schema change that guarantees:
+
+- user_sessions.user_id cannot mismatch the user associated with the referenced tenant membership.
+- A session may only reference a tenant membership that belongs to the same user.
+- The fix must be enforceable by schema-level constraints or a clearly documented schema relationship.
+- Do not rely on application code only.
+
+Acceptable approaches may include, depending on the current schema:
+
+- adding a composite foreign key from user_sessions fields to tenant_memberships fields
+- adding a composite unique/index requirement that supports that foreign key
+- adjusting the session-to-membership relationship to make mismatch impossible
+- documenting why a nullable tenant membership is safe if global/super-admin sessions are supported
+
+Pick the smallest correct approach based on the existing schema.
+
+## Required documentation
 
 Create:
 
-- docs/phase-1-db/03-db-schema-approval-gate.md
+- docs/phase-1-db/04-db-schema-cleanup-result.md
 
-## Review requirements
+The document must explain:
 
-The approval gate must include:
+1. The problem found by the approval gate.
+2. The exact schema cleanup made.
+3. Why the cleanup prevents cross-user membership/session mismatch.
+4. What remains blocked.
+5. Why migrations are still not generated.
+6. The next safe step.
 
-1. Review result:
-Classify the existing DB schema as:
-- approved for next planning step
-- approved with conditions
-- needs cleanup before continuing
-- not approved
+Update only if needed:
 
-2. Auth schema coverage:
-Check whether the schema covers:
-- users
-- tenant memberships
-- roles
-- permissions
-- role permissions
-- sessions
-- login attempts
-- audit/auth relationship
-
-3. Security review:
-Check conceptually:
-- password hash only, no plaintext password
-- session token digest only, no raw token storage
-- session expiry/revocation fields
-- login attempt tracking
-- no production secrets
-- no real users
-- no database connection code
-- no Docker/PostgreSQL runtime
-
-4. Tenant isolation review:
-Check conceptually:
-- users are global identities
-- tenant_memberships define tenant access
-- Super Admin separation is clear
-- tenant-scoped access cannot be derived from client headers
-- customer users are not mixed with platform operators unless separately approved
-
-5. Migration readiness:
-State whether migrations are allowed now.
-If not, list exact conditions before migrations:
-- database ADR approval
-- tenant isolation approval
-- migration policy
-- Docker/PostgreSQL local test approval
-- rollback strategy
-- test data policy
-- no production secrets
-
-6. Gaps and risks:
-List any missing fields, constraints, indexes, lifecycle statuses, or decisions that must be resolved before migration generation.
-
-7. Next safe step:
-Recommend exactly one next step:
-- DB schema cleanup only
-- Migration planning only
-- Drizzle schema typecheck hardening only
-- Pause and ask founder
-
-Do not recommend full Auth implementation.
+- docs/00-current-source-of-truth.md
+- docs/phase-1-db/README.md
 
 ## Allowed changes
 
 Allowed:
-- create docs/phase-1-db/03-db-schema-approval-gate.md
+- modify packages/db schema files only as needed for this specific cleanup
+- modify packages/db exports only if required by the schema change
+- add or update package/db type-level checks only if already present and safe
+- create docs/phase-1-db/04-db-schema-cleanup-result.md
 - update docs/00-current-source-of-truth.md only if needed
 - update docs/phase-1-db/README.md only if needed
 
@@ -139,15 +107,16 @@ Do not:
 - install dependencies
 - run pnpm install
 - modify pnpm-lock.yaml
-- modify package.json files
+- modify package.json files unless absolutely required, which should not be required
 - modify pnpm-workspace.yaml
 - run Docker
 - connect to PostgreSQL
 - create migrations
 - generate migrations
-- modify schema files
-- modify Drizzle config
-- modify app code
+- create migration journal
+- add seed files
+- create database runtime connection code
+- modify apps/api code
 - create auth routes
 - add provider/ledger/order/payment/UI code
 - add secrets
@@ -167,18 +136,16 @@ Run:
 Report:
 - files created
 - files updated
-- approval gate result
-- auth schema coverage
-- security review result
-- tenant isolation review result
-- migration readiness
-- gaps and risks
-- exact next recommended step
+- exact schema cleanup made
+- how the cleanup prevents session/membership user mismatch
+- whether migrations were created
+- whether Docker or database connection was used
 - commands run
 - whether typecheck passed
 - whether git diff --check passed
 - whether working tree has changes
 - whether dependencies/lockfiles changed
+- exact next recommended step
 
 Do not commit.
 Do not push.

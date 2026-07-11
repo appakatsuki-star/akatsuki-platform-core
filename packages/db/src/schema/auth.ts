@@ -163,6 +163,8 @@ export const tenantMemberships = pgTable(
   },
   (table) => [
     uniqueIndex("tenant_memberships_tenant_user_unique").on(table.tenantId, table.userId),
+    // Supports session ownership enforcement through a composite foreign key.
+    uniqueIndex("tenant_memberships_id_user_unique").on(table.id, table.userId),
     index("tenant_memberships_tenant_status_idx").on(table.tenantId, table.status),
     index("tenant_memberships_user_status_idx").on(table.userId, table.status),
     // Enforces both tenant-role scope and same-tenant ownership.
@@ -209,9 +211,8 @@ export const userSessions = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
-    tenantMembershipId: uuid("tenant_membership_id").references(() => tenantMemberships.id, {
-      onDelete: "restrict",
-    }),
+    // Nullable for global/platform sessions; when set, the composite FK below requires same-user ownership.
+    tenantMembershipId: uuid("tenant_membership_id"),
     // The raw opaque bearer token must never be persisted.
     sessionTokenDigest: varchar("session_token_digest", { length: 255 }).notNull(),
     status: sessionStatus("status").default("active").notNull(),
@@ -231,6 +232,11 @@ export const userSessions = pgTable(
     index("user_sessions_user_status_idx").on(table.userId, table.status),
     index("user_sessions_membership_status_idx").on(table.tenantMembershipId, table.status),
     index("user_sessions_expires_at_idx").on(table.expiresAt),
+    foreignKey({
+      columns: [table.tenantMembershipId, table.userId],
+      foreignColumns: [tenantMemberships.id, tenantMemberships.userId],
+      name: "user_sessions_membership_user_fk",
+    }).onDelete("restrict"),
     check(
       "user_sessions_revocation_check",
       sql`(${table.status} = 'revoked' AND ${table.revokedAt} IS NOT NULL) OR (${table.status} <> 'revoked' AND ${table.revokedAt} IS NULL)`,
