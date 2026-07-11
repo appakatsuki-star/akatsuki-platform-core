@@ -82,3 +82,18 @@ Define wallets as customer-facing views over an immutable, balanced double-entry
 - Which actions and values require dual approval?
 - How are payment fees, provider costs, tenant revenue, chargebacks, reserves, and unclaimed balances represented?
 - What statement, retention, reconciliation frequency, and rounding requirements apply?
+
+## Provider cost, tier markup, and agent commission
+
+Catalog pricing calculations and ledger postings have different responsibilities. The catalog produces a versioned quote; only approved ledger postings change financial position.
+
+For each provider-backed order, snapshot provider cost, customer price, tier/rule, markup, linked agent, commission, and expected net profit. Finance must approve whether provider cost and agent commission become payable/clearing liabilities at provider acceptance, completion, settlement, or another explicit event.
+
+Rules:
+
+- Provider catalog price changes affect new quotes only and never edit posted entries or past order economics.
+- Agent commission is not merely a report value; when earned it uses approved payable/expense or settlement accounts.
+- Refund/reversal policy explicitly reverses unearned revenue, provider cost treatment, and agent commission as applicable.
+- `customer_price - provider_cost - agent_commission` is an operational margin view, not a substitute for an accountant-approved posting matrix, payment fees, taxes, settlement differences, or recognized profit.
+- Pricing, rounding, and commission calculations use exact amounts/currency and versioned rules; no floating point.
+- Manual commission or profit corrections require reason, audit, and maker-checker under the approved threshold policy.

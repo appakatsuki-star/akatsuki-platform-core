@@ -78,3 +78,9 @@ Define the Social Media Marketing module for selling approved provider-backed en
 - Which targets can be validated reliably without excessive data collection?
 - What delivery SLA and refill guarantee can be promised per service?
 - How are organic loss and social-network enforcement distinguished from provider under-delivery?
+
+## Catalog publication shape
+
+SMM provider services are imported as raw Provider Products and remain hidden until reviewed. Because most require a target plus customer-selected quantity, the normal publishing mode is `ADD_AS_STANDALONE_PRODUCT` with its own tenant-branded Store Product and a versioned `quantity_counter` input using reviewed provider min/max/step.
+
+Link/username/quantity mappings, price tiers, visibility, visuals, and provider service mapping are approved before publication. Provider sync cannot silently alter an active customer form or price. SMM remains outside the recommended first provider-backed game top-up MVP.

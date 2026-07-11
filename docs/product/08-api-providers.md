@@ -80,3 +80,25 @@ Define external provider governance and a stable adapter boundary for SMM fulfil
 - What data may each provider receive, and what retention/residency contracts apply?
 - Which providers support idempotency, inquiry, cancellation, refund, and signed webhooks?
 - What health thresholds, SLAs, rate limits, and failover approval rules apply?
+
+## Provider catalog publishing boundary
+
+Provider catalog import and customer publication are separate workflows:
+
+- **Provider Product:** a raw synchronized provider service record containing provider/service IDs, name, cost/currency, availability/status, min/max/step, raw input definitions, optional category/image metadata, and last sync time.
+- **Store Category:** tenant-owned customer section with branded name, description, icon, image, banner, order, and visibility.
+- **Store Product:** tenant-owned customer product page with branded presentation, source/fulfillment type, ordering, and publication state.
+- **Product Package / Variant:** sellable option mapped to a provider service, with reviewed inputs, quantity constraints, pricing rules, and state.
+
+Raw Provider Products are never customer-visible automatically. Sync detects new, updated, disabled, removed, price, and input changes; it preserves history and routes material published-mapping changes to review.
+
+Publishing supports:
+
+- `ADD_AS_PACKAGE`: provider service becomes a variant under an existing/new parent Store Product, such as PUBG UC packages under PUBG Mobile.
+- `ADD_AS_STANDALONE_PRODUCT`: provider service becomes its own Store Product, commonly for quantity/input-specific SMM, recharge, or live-chat services.
+
+Tenant presentation overrides provider metadata. Provider images are optional reviewed fallback inputs only. Provider sync cannot silently overwrite tenant visuals, customer names/descriptions, published input schemas, tier prices, or historical order snapshots.
+
+Dynamic input definitions support text, number, quantity counter, dropdown, radio, textarea, phone, email, password, and hidden provider metadata. Each definition carries stable key, required/visibility flags, label/help/placeholder, validation, default, options, and min/max/step. Password inputs are exceptional and require stronger minimization, redaction, retention, and security approval.
+
+Sync, mapping, publish/unpublish, visuals, input schemas, price/tier rules, credentials, and provider order actions are separately permissioned and audited.

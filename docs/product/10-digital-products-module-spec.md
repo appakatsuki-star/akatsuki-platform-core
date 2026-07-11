@@ -78,3 +78,9 @@ Define secure sale and delivery of files, license keys, codes, credentials, or t
 - May support staff ever reveal customer-delivered secrets, and under what approval?
 - How are invalid supplier inventory and customer replacement evidence adjudicated?
 - Are unlimited-copy products allowed, and who holds intellectual-property responsibility?
+
+## Provider-backed catalog relationship
+
+Not every digitally fulfilled service is internal stock. A Store Product may use source type `provider`, `stock`, or `manual`, and its Product Packages/Variants select the fulfillment mapping.
+
+Game top-up products normally use one parent Store Product with `ADD_AS_PACKAGE`: provider services such as 60/325/660 UC become variants beneath a tenant-branded PUBG Mobile page. Provider inputs such as Player ID and server are reviewed/versioned and generate the customer form. Stock license/code inventory remains a separate fulfillment path and must not be conflated with raw Provider Products.

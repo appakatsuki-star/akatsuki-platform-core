@@ -77,3 +77,20 @@ Define a consistent order model that snapshots what was purchased, coordinates w
 - What cancellation windows apply before and after provider dispatch?
 - Are prices tax-inclusive, and which invoicing requirements apply?
 - What service-level promises and automatic remedies exist for delayed orders?
+
+## Provider catalog, pricing, and commission snapshots
+
+For provider-backed orders, the selected Store Product and Product Package/Variant reference a reviewed mapping to a raw Provider Product. Order creation snapshots rather than live-links all commercial and fulfillment facts needed to explain the sale:
+
+- store category/product/package identifiers and customer display names;
+- source and fulfillment types;
+- provider/connection/service IDs and provider catalog version;
+- provider cost/currency and customer sale price/currency;
+- pricing tier/rule version, markup percentage/amount;
+- linked agent, commission percentage/amount, and calculated platform/admin net profit;
+- reviewed input schema version and safe customer input snapshot;
+- min/max/step, provider order ID/status, internal status, and audit/correlation references.
+
+Provider sync, tier changes, mapping changes, or customer reassignment never rewrite an existing order snapshot. If provider cost/input/availability changes between quote and submission, the explicit price-change/requote and service-suspension policy applies. Ambiguous provider submission is queried by stable reference before retry.
+
+An Agent commission relationship is distinct from an Agent staff membership/role. Commission eligibility is fixed at order confirmation, conflict-checked, and reversed/adjusted through approved rules when the sale is refunded or reversed.
