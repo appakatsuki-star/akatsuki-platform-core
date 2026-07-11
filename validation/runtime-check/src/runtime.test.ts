@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import { createWalletApplication } from "./application.js";
 import { connectDatabase } from "./database.js";
-import { ledgerEntries, tenants, users, wallets } from "./schema.js";
+import { tenants, users, wallets } from "./schema.js";
 import { buildServer } from "./server.js";
 
 const { db, pool } = connectDatabase();
@@ -11,6 +11,7 @@ const tenantA = { id: randomUUID(), slug: `tenant-a-${Date.now()}` };
 const tenantB = { id: randomUUID(), slug: `tenant-b-${Date.now()}` };
 const userId = randomUUID();
 const walletId = randomUUID();
+let server: ReturnType<typeof buildServer> | undefined;
 
 try {
   await db.insert(tenants).values([tenantA, tenantB]);
@@ -18,7 +19,7 @@ try {
   await db.insert(wallets).values({ tenantId: tenantA.id, id: walletId, ownerUserId: userId, currency: "USD" });
 
   const application = createWalletApplication(db);
-  const server = buildServer({
+  server = buildServer({
     walletApplication: application,
     resolveTenant: async (slug) => (await db.select().from(tenants).where(eq(tenants.slug, slug)).limit(1))[0] ?? null,
   });
@@ -38,15 +39,11 @@ try {
   const totals = await db.execute(sql`SELECT direction, SUM(amount_minor)::text AS amount FROM ledger_entries
     WHERE tenant_id=${tenantA.id}::uuid GROUP BY direction ORDER BY direction`);
   assert.deepEqual(totals.rows.map((row) => row.amount), ["2500", "2500"]);
-  await server.close();
   console.log("PASS health, tenant isolation, balanced wallet credit");
 } finally {
-  await db.delete(ledgerEntries).where(eq(ledgerEntries.tenantId, tenantA.id));
-  await db.execute(sql`DELETE FROM audit_logs WHERE tenant_id=${tenantA.id}::uuid`);
-  await db.execute(sql`DELETE FROM ledger_transactions WHERE tenant_id=${tenantA.id}::uuid`);
-  await db.delete(wallets).where(eq(wallets.tenantId, tenantA.id));
-  await db.delete(users).where(eq(users.id, userId));
-  await db.delete(tenants).where(eq(tenants.id, tenantA.id));
-  await db.delete(tenants).where(eq(tenants.id, tenantB.id));
+  // Posted ledger data is immutable by design. This disposable validation uses
+  // unique tenant IDs on every run and leaves its fixtures for database reset via
+  // Docker volume teardown instead of weakening or bypassing the ledger trigger.
+  await server?.close();
   await pool.end();
 }

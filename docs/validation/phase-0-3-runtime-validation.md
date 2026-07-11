@@ -2,88 +2,73 @@
 
 **Date:** 2026-07-11
 
-**Status:** Blocked at PostgreSQL startup; dependencies and TypeScript validation passed
+**Status:** Passed, with a migration-runner limitation recorded
 
-## Environment
+## Environment and database
 
-| Check | Result |
-|---|---|
-| Node.js | Passed — `v24.16.0` |
-| pnpm | Passed — `11.11.0` |
-| Docker CLI | Passed — `29.6.1` build `8900f1d` |
-| Docker Compose | Passed — `v5.2.0` |
-| npm registry | Passed outside restricted sandbox — `PONG 340ms` |
-| Docker daemon/image operation | Failed — Docker API returned HTTP 500, then daemon connection stalled |
+- Node.js `v24.16.0` and pnpm `11.11.0` were used.
+- Docker and Docker Compose were available.
+- PostgreSQL service `validation-postgres` was healthy and reachable at `127.0.0.1:55432`.
+- `DATABASE_URL=postgres://akatsuki_validation:validation_only@127.0.0.1:55432/akatsuki_validation` connected successfully.
+- Dependencies were installed and the existing Phase 0.3 migration had already been applied successfully.
+
+## Failure cause and fix
+
+The original runtime test completed all assertions and printed:
+
+```text
+PASS health, tenant isolation, balanced wallet credit
+```
+
+It then failed during teardown because it attempted to delete ledger entries belonging to a `posted` transaction. PostgreSQL correctly rejected the delete through `reject_posted_ledger_mutation()` with `posted ledger entries are immutable`.
+
+The validation-only teardown was changed to preserve posted ledger fixtures. Every run already creates unique tenant, user, wallet, transaction, and idempotency identifiers, so repeated tests do not collide. Teardown now closes Fastify and the PostgreSQL pool only. Disposable test data is reset by recreating the validation Docker volume when required.
+
+The trigger was not disabled, bypassed, or weakened. Posted ledger entries remain immutable, and correction in future business logic must use reversal transactions.
 
 ## Commands executed
 
 ```text
-pnpm approve-builds
-pnpm install
-docker compose up -d validation-postgres
-docker image inspect postgres:17-alpine
-docker compose ps
-pnpm validation:check
-pnpm validation:migrate
+DATABASE_URL=postgres://akatsuki_validation:validation_only@127.0.0.1:55432/akatsuki_validation pnpm validation:check
+DATABASE_URL=postgres://akatsuki_validation:validation_only@127.0.0.1:55432/akatsuki_validation pnpm validation:migrate
+DATABASE_URL=postgres://akatsuki_validation:validation_only@127.0.0.1:55432/akatsuki_validation pnpm validation:test
+DATABASE_URL=postgres://akatsuki_validation:validation_only@127.0.0.1:55432/akatsuki_validation pnpm validation:start
+curl -i http://127.0.0.1:3100/health
+curl -i -H 'x-tenant-slug: tenant-a-1783767876324' http://127.0.0.1:3100/v1/sample-wallet
+curl -i -H 'x-tenant-slug: tenant-b-1783767876324' http://127.0.0.1:3100/v1/sample-wallet
 ```
-
-`pnpm approve-builds` reported that no packages were awaiting approval. `pnpm install` completed successfully and verified the dependency lock state. The runtime-check scripts were inspected and are:
-
-- `check`: `tsc --noEmit`
-- `migrate`: `tsx src/migrate.ts`
-- `test`: `tsx src/runtime.test.ts`
-- `start`: `tsx src/start.ts`
-
-The requested Compose service is named `validation-postgres` in the existing file; there is no `postgres` service.
 
 ## Results
 
-### Dependencies and TypeScript
+| Validation | Result |
+|---|---|
+| PostgreSQL container | Passed — healthy and accepted application/test connections |
+| TypeScript | Passed — `tsc --noEmit` exited 0 |
+| Initial migration | Passed before this rerun; schema and trigger are active |
+| Migration rerun | Expected limitation — failed with `ledger_direction already exists` because the disposable script has no migration journal/idempotent runner |
+| Runtime test | Passed — exited 0 after printing `PASS health, tenant isolation, balanced wallet credit` |
+| Fastify startup | Passed — listened on port 3100 and served requests |
+| Health route | Passed — HTTP 200 with `{"status":"ok"}` |
+| Tenant A route | Passed — HTTP 200 with USD wallet and `balanceMinor: "2500"` |
+| Tenant B isolation | Passed — HTTP 404 with `WALLET_NOT_FOUND` |
+| Server shutdown | Stopped deliberately with Ctrl-C after HTTP checks; exit 130 is expected manual termination |
 
-Passed. `pnpm install` exited successfully. `pnpm validation:check` ran `tsc --noEmit` with no errors.
+## Migration note
 
-### PostgreSQL
+`validation:migrate` reads and executes one raw SQL bootstrap file. It is intentionally suitable only for a clean disposable database and does not maintain a migration journal. Re-running it against an already migrated volume fails on existing enum/table objects. This does not invalidate the successful initial migration or runtime tests, but production scaffolding must use a real Drizzle migration runner with recorded migration history rather than making schema DDL broadly `IF NOT EXISTS`.
 
-Failed to start. `docker compose up -d validation-postgres` attempted to pull/start `postgres:17-alpine`, but Docker returned:
+## Remaining risks
 
-```text
-request returned 500 Internal Server Error for API route ... /images/create
-```
-
-A subsequent image inspection/Compose status operation stalled while connecting to the Docker socket and had to be interrupted. No PostgreSQL container was listed as running.
-
-### Migration/schema
-
-Failed because PostgreSQL was not listening. The first sandboxed attempt also showed a local `tsx` IPC `EPERM`; rerunning with approved execution successfully launched `tsx` and reached the PostgreSQL client, which then failed with `ECONNREFUSED` on both `::1:55432` and `127.0.0.1:55432`. Therefore the SQL migration and database schema/constraints were not applied or validated.
-
-### Runtime tests
-
-Not run. The existing test requires the migrated PostgreSQL database. Running it without the database would only repeat the confirmed connection failure and would not provide validation evidence.
-
-### Fastify server and health route
-
-Not started. The current validation server initializes its PostgreSQL pool during startup, so `/health` could not be tested without the database. No successful health response was recorded.
-
-### Tenant-aware route
-
-Not tested. `/v1/sample-wallet` requires tenant fixtures, the migrated schema, and the balanced ledger credit flow. No successful tenant route response was recorded.
-
-## Errors and remaining risks
-
-- Docker Desktop/daemon is unhealthy or incompatible at its current API/socket state despite the CLI being installed.
-- PostgreSQL 17 migration compatibility, constraints, immutability, transactions, rollback, idempotency, and concurrency remain untested.
-- The health endpoint is coupled to startup database initialization in this disposable check, so it cannot demonstrate liveness while PostgreSQL is unavailable.
-- Tenant repository isolation and future PostgreSQL RLS still require real integration tests.
-- Ledger semantics require accounting review.
-- Node.js 24 was used; the production-supported Node LTS is still an explicit decision.
+- Test fixtures accumulate until the disposable Docker volume is recreated; this is accepted for Phase 0.3 only.
+- Production migration journaling, concurrent deploy behavior, rollback/forward recovery, and drift detection remain future work.
+- The runtime check validates one balanced credit, not the full chart of accounts, holds, reversals, refunds, settlement, or concurrent idempotency.
+- Header-based tenant resolution is validation-only; production tenant context must come from authenticated memberships, verified domains, or scoped credentials.
+- Repository isolation needs a wider negative test matrix and future PostgreSQL RLS evaluation.
+- Ledger semantics and account taxonomy still require accounting review.
+- The supported production Node LTS must be confirmed before scaffolding.
 
 ## Recommendation
 
-**Phase 1 remains blocked.** Restart or repair Docker Desktop/daemon until both commands below complete promptly and successfully:
+**Phase 0.3 is passed.** The runtime foundation demonstrated real Fastify startup, PostgreSQL connectivity, applied schema/trigger behavior, TypeScript correctness, balanced double-entry credit, posted-entry immutability, tenant isolation, health routing, and tenant-aware HTTP behavior.
 
-```text
-docker image inspect postgres:17-alpine
-docker compose up -d validation-postgres
-```
-
-Then confirm the container is healthy and run, in order: `pnpm validation:migrate`, `pnpm validation:test`, `pnpm validation:start`, `/health`, and `/v1/sample-wallet`. Do not authorize Phase 1 until migration, health, tenant isolation, and balanced ledger tests pass with recorded output.
+This result removes the Phase 0.3 runtime blocker, but it does not itself start or authorize Phase 1. Before Phase 1 scaffolding, explicitly approve the production Node/dependency versions, Drizzle migration-journal strategy, repository conventions, and accounting review gate.
