@@ -31,9 +31,9 @@ The current repository contains documentation and Phase 0 evidence. Existing emp
 apps/                              # planned deployable composition roots
   api/                             # planned backend HTTP application
   worker/                          # planned asynchronous/background application
-  super-admin-web/                 # planned Akatsuki Super Admin frontend
-  tenant-admin-web/                # planned tenant operator frontend
-  customer-storefront-web/         # planned tenant customer storefront
+  super-admin/                     # planned Akatsuki Super Admin frontend
+  tenant-admin/                    # planned tenant operator frontend
+  storefront/                      # planned tenant customer storefront
 
 modules/                           # planned business-capability ownership
   identity-access/
@@ -72,9 +72,9 @@ Names in this tree are stable boundary names for planning. Exact files, workspac
 |---|---|---|
 | `apps/api` | HTTP composition root, route adapters, trusted request-context assembly, application use-case invocation, response/error mapping | Business rules, direct frontend logic, provider secrets, or another module's persistence internals |
 | `apps/worker` | Background composition root, trusted job context restoration, scheduled/queued application use-case invocation | A second copy of business rules, blind provider retries, or financial mutation shortcuts |
-| `apps/super-admin-web` | Platform-operator presentation and API client behavior | Tenant Admin assumptions, server-side authorization truth, secrets, or direct database access |
-| `apps/tenant-admin-web` | Tenant-operator presentation and API client behavior | Super Admin authority, customer storefront behavior, secrets, or direct database access |
-| `apps/customer-storefront-web` | Customer shopping and order-status presentation for the resolved tenant | Admin capabilities, provider-cost visibility, secrets, or direct database access |
+| `apps/super-admin` | Platform-operator presentation and API client behavior | Tenant Admin assumptions, server-side authorization truth, secrets, or direct database access |
+| `apps/tenant-admin` | Tenant-operator presentation and API client behavior | Super Admin authority, customer storefront behavior, secrets, or direct database access |
+| `apps/storefront` | Customer shopping and order-status presentation for the resolved tenant | Admin capabilities, provider-cost visibility, secrets, or direct database access |
 
 The three web surfaces are separate security and user-experience boundaries. Shared UI primitives may be reused, but navigation and browser visibility never replace API-side authorization.
 
