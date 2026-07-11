@@ -12,6 +12,7 @@ import {
   type SafeLogSink,
 } from "./logger.js";
 import { registerSuperAdminHealthRoute } from "./super-admin/health.js";
+import { registerSuperAdminReadOnlyRoutes } from "./super-admin/routes.js";
 
 export interface BuildAppOptions {
   logSink?: SafeLogSink;
@@ -45,6 +46,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<ApiShell>
   registerErrorHandling(app);
   registerHealthRoutes(app, readiness);
   registerSuperAdminHealthRoute(app);
+  registerSuperAdminReadOnlyRoutes(app);
 
   await app.ready();
   readiness.markReady();

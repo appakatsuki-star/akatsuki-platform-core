@@ -93,6 +93,7 @@ The conditional internal MVP document is an inactive template, not authorization
 | Super Admin backend contracts | `docs/phase-1-super-admin/02-super-admin-backend-contracts.md` | Documentation-only route/envelope/permission/error/audit contracts; all routes remain unimplemented and next step is Super Admin health route only |
 | Super Admin health route | `apps/api/src/super-admin/health.ts`, `docs/phase-1-super-admin/03-super-admin-health-route-result.md` | Dependency-free `GET /super-admin/health` only; no Auth, DB, dashboard, tenant, CMS, or frontend implementation |
 | Super Admin route skeleton plan | `docs/phase-1-super-admin/04-super-admin-route-skeleton-plan.md` | Documentation-only plan for four dependency-free read skeletons; no API change, Auth, DB/read models, real data, or mutations |
+| Super Admin read skeletons | `apps/api/src/super-admin/routes.ts`, `docs/phase-1-super-admin/05-super-admin-route-skeleton-result.md` | Four static `not_connected` GET skeletons with UUID validation only; no Auth, DB/read models, real data, metrics, or mutations |
 | Phase 1 work items | `docs/phase-1-tickets/` | 46 future tickets; none authorized |
 | Sprint sequence/rules | `docs/phase-1-sprints/` | Sprint 0–10 map, execution rules, stop conditions |
 | Future AI Builder | `docs/future/` | Post-MVP only; no integration or Phase 1 feature |
