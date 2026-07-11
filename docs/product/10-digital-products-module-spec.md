@@ -1,5 +1,7 @@
 # Digital Products Module Specification
 
+> **Post-MVP domain specification / partially superseded for first-MVP selection.** This document contains early file, license, and stock-product planning; it is not the current first Phase 1 fulfillment path. The current proposal is provider-backed game top-up with raw Provider Products reviewed and published as Packages/Variants. See `docs/00-current-source-of-truth.md` and the current final-audit, final-go-no-go, blueprint, ticket, and sprint documents. Stock/manual fulfillment and advanced digital delivery remain postponed unless separately approved.
+
 ## Purpose
 
 Define secure sale and delivery of files, license keys, codes, credentials, or time-limited digital access while controlling inventory, preventing duplicate allocation, and preserving customer entitlement history.

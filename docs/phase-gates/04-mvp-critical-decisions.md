@@ -1,5 +1,7 @@
 # MVP Critical Decisions
 
+> **Historical decision packet / first-module section superseded.** The original SMM-or-digital-product selection below predates the current proposed provider-backed game top-up path. Use `docs/00-current-source-of-truth.md`, `docs/decisions/03-recommended-mvp-path.md`, and the final GO/NO-GO and Phase 1 planning documents for current scope. This document remains evidence of earlier open questions; it grants no approval.
+
 ## Purpose
 
 This is the minimum decision packet required before writing production code. It narrows broad product questions into nine signed decisions. Recommended defaults are proposals, not approvals.

@@ -1,5 +1,7 @@
 # Phase 0.2 — Foundation Validation Report
 
+> **Validation evidence only—not production architecture or scaffolding.** This report validates design shape using incomplete sketches. Do not copy its TypeScript/SQL directly into Phase 1. Production choices, versions, schema, roles, RLS, migrations, and security must follow `docs/00-current-source-of-truth.md`, accepted ADRs, and the final entry evidence.
+
 **Date:** 2026-07-11  
 **Status:** Completed as design/shape validation  
 **Dependencies installed:** None  

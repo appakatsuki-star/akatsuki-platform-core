@@ -1,5 +1,7 @@
 # SMM Module Specification
 
+> **Post-MVP domain specification.** SMM is not part of the current proposed Phase 1 MVP. The current direction is one provider-backed game top-up product using `ADD_AS_PACKAGE`. Read `docs/00-current-source-of-truth.md` before using this specification. SMM implementation requires a separate later product, provider, legal, finance, security, and readiness approval.
+
 ## Purpose
 
 Define the Social Media Marketing module for selling approved provider-backed engagement services while isolating provider variability, validating targets, preserving price/cost snapshots, and handling asynchronous partial fulfillment truthfully.

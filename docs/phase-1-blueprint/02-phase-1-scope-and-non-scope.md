@@ -33,11 +33,21 @@
 - Migration journal, reviewed schema changes, outbox/inbox/idempotency records, queue failure handling.
 - Encrypted backups/PITR and production-like restore validation as entry/completion requirements where applicable.
 
+### Future-safe non-AI presentation foundation
+
+- Design tokens and bounded tenant theme settings required by the normal white-label UI.
+- Product/category image metadata required by the normal catalog.
+- An approved declarative widget-registry concept only if ordinary Phase 1 UI already needs it.
+- Existing feature flags/audit vocabulary may remain extensible, but `ai_builder_enabled` stays false and no future AI permission is active/assignable.
+- Do not add any item solely to prepare AI Builder; prefer normal draft/preview/publish/version/audit mechanisms.
+
 ## Explicit non-scope
 
 - SMM customer products, refill, drip-feed, bulk orders, or quantity services.
 - Finance/transfers, withdrawals, peer-to-peer movement, cryptocurrency, lending, or FX.
 - AI model/provider integration or AI execution of any provider/catalog/pricing/financial action.
+- AI Builder/Design Studio/AI Studio UI, prompt center, AI image/widget/theme/layout/animation generation, Figma/design import, Codex/Replit cloud integration, code generation, or preview-environment automation.
+- Tenant arbitrary code prompts, AI direct deployment/publication, or external AI access to production secrets, provider keys, customer PII, order inputs, or financial data.
 - Native mobile apps or public partner API.
 - Runtime plugins, provider marketplace, broad provider-catalog auto-publication, multi-provider routing, or automatic failover.
 - Stock/code and manual fulfillment implementation.

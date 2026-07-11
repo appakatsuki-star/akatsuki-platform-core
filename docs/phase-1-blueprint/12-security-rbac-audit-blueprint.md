@@ -64,3 +64,7 @@ Export critical security/audit events to separately controlled central logging. 
 ## AI boundary
 
 AI is disabled from Phase 1. No model/provider/data path or AI ability to order, inquire, publish, price, manage credentials, message customers, change permissions, reveal inputs, or move money.
+
+Akatsuki AI Builder / Design Studio is post-MVP. Future permissions may be documented but are not active, assignable, seeded, or included in wildcard roles. If the normal audit schema has a source field, it records real Phase 1 human/system actors and may be versioned for later vocabulary; Phase 1 emits no `future_ai` source or AI run.
+
+No external AI tool receives production secrets, provider/payment keys, customer PII/order inputs, financial data, database/shell access, or unrestricted network access. A future AI change must follow Proposal → Preview → Tests → Human Approval → Audit → Controlled Deploy and cannot approve itself.

@@ -59,3 +59,7 @@
 - **Acceptance criteria:** Published form/assets are immutable version references and provider change cannot alter them without review.
 - **Do not do:** Execute tenant code, trust file extension, expose provider URL, or collect unused sensitive input.
 - **Notes for Codex:** Object storage/scanner decision must close before asset implementation.
+
+### Future AI Builder compatibility note
+
+`CAT-004` may use ordinary design tokens, tenant theme settings, and product/category image metadata because the non-AI white-label catalog needs them. An approved declarative widget registry may be referenced only if the ordinary storefront already requires it. Do not add AI fields, SDKs, image generation, prompt/change-proposal tables, widget builders, Figma/Codex/Replit integrations, routes, jobs, permissions, or feature UI. Any existing platform feature flag may reserve `ai_builder_enabled = false`, but it must be non-assignable/non-activating and is not an acceptance criterion.

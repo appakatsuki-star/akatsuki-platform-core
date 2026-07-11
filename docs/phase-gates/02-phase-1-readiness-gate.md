@@ -1,5 +1,7 @@
 # Phase 1 Readiness Gate
 
+> **Historical gate baseline / partially superseded.** The control categories remain useful, but the former SMM-or-digital-product choice and this file's gate snapshot are not current. Read `docs/00-current-source-of-truth.md` and `docs/final-go-no-go/` for the current provider-backed game top-up scope, blockers, evidence, and `NO-GO` status. Older SMM, transfers, FX, stock/manual fulfillment, AI execution/AI Builder, and advanced agent payout items are not in the first MVP unless separately approved.
+
 ## Gate outcome
 
 The only valid outcome is **GO** or **NO-GO**. Phase 1 may start only when every mandatory condition below is evidenced and signed by its accountable owner. Conditional approval, an undocumented exception, or “resolve while coding” is `NO-GO` for a blocking item.

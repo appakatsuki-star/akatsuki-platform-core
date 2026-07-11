@@ -41,6 +41,8 @@
 - Never trust UI hiding as authorization.
 - Validate all input at boundaries; parameterize SQL; redact logs/errors/audit.
 - AI remains disabled from provider/catalog/pricing/financial execution unless a later approved decision changes the boundary.
+- Do not add AI Builder/Design Studio SDKs, providers, APIs, routes, jobs, tables, prompt UIs, code/design integrations, or permissions to Phase 1. Future-safe theming/catalog/audit fields are allowed only when an approved non-AI Phase 1 requirement independently needs them.
+- Never send production secrets, provider/payment credentials, customer PII/order inputs, financial data, or unrestricted production context to Codex, Replit, Figma, Gemini, Nano Banana, or any external AI/design/development tool.
 
 ## Ledger and order invariants
 

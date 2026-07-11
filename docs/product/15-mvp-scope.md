@@ -1,5 +1,7 @@
 # MVP Scope
 
+> **Partially superseded for Phase 1 scope.** This document contains early planning, including the former choice between SMM and a digital-product path. The current proposed Phase 1 direction is one provider-backed game top-up flow using reviewed `ADD_AS_PACKAGE` publication. Start with `docs/00-current-source-of-truth.md`; current gate and implementation sources are under `docs/final-audit/`, `docs/final-go-no-go/`, `docs/phase-1-blueprint/`, `docs/phase-1-tickets/`, and `docs/phase-1-sprints/`. SMM, transfers, FX, stock/manual fulfillment, AI execution/AI Builder, and advanced agent payout automation are postponed unless separately approved. Historical domain rules below remain useful where they do not conflict with the current index.
+
 ## Purpose
 
 Turn the product specifications into a strict Phase 1 boundary and acceptance target without starting implementation. The MVP proves tenant isolation, controlled administration, one customer purchase journey, financial integrity, recoverable asynchronous fulfillment, and auditable operations—not the full product vision.

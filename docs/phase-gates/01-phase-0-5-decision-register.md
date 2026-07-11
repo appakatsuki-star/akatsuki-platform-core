@@ -1,5 +1,7 @@
 # Phase 0.5 Decision Register
 
+> **Historical decision register / partially superseded.** This file preserves the open decisions as recorded in Phase 0.5 and still contains the former SMM-or-digital-product MVP choice. Do not use it as the current Phase 1 status or scope. Start with `docs/00-current-source-of-truth.md`; use `docs/final-go-no-go/` for current gate status and `docs/phase-1-blueprint/`, tickets, and sprints for the provider-backed game top-up direction. No decision in this historical register is automatically approved.
+
 ## Purpose and use
 
 This register is the authoritative index of decisions that affect Phase 1 readiness. It does not replace ADRs, product specifications, legal advice, accounting approval, or provider contracts. A decision is closed only when its named evidence exists and the accountable owner records approval.

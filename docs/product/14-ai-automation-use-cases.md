@@ -1,5 +1,7 @@
 # AI Automation Use Cases
 
+> **Phase 1 status:** Postponed. Phase 1 includes no AI provider, AI Builder UI, prompt workflow, model data path, or AI execution. The suggestion-only MVP wording below describes a possible later governed pilot, not the current provider-first Phase 1 scope. See `docs/future/01-akatsuki-ai-builder-future-module.md` and `02-ai-builder-phase-1-foundation-only.md`.
+
 ## Purpose
 
 Define safe, optional, tenant-entitled AI assistance that improves support, content, and operations without becoming a source of truth or gaining autonomous authority over money, permissions, external messages, sensitive data, or irreversible outcomes.
@@ -70,6 +72,7 @@ Define safe, optional, tenant-entitled AI assistance that improves support, cont
 
 - Retrieval-assisted knowledge drafts, multilingual support drafts, catalog enrichment, provider incident summarization, demand forecasting, and reconciliation recommendations.
 - Human-approved tool proposals for low-risk reversible workflows after evaluation; any low-risk autonomy requires a new approved ADR and explicit boundaries.
+- Akatsuki AI Builder / Design Studio may later propose themes, layouts, approved widgets/animations, product/category images, design imports, and scoped development tasks. Every change follows proposal, isolated preview, deterministic tests, authorized human approval, audit, and controlled reversible deployment. It never receives direct financial/provider/RBAC/secret authority.
 
 ## Open questions
 

@@ -44,3 +44,7 @@
 - **Acceptance criteria:** Authorized roles can publish one reviewed package set and operate orders with immutable snapshots and no forbidden data/action.
 - **Do not do:** Calculate authoritative price/profit only in browser, allow blind retry, or permit raw status/balance editing.
 - **Notes for Codex:** Split into smaller implementation PRs when executed; this ticket defines the page family contract.
+
+### Future Design Studio non-scope note
+
+The normal Tenant Admin UI may expose bounded manual theme tokens, approved theme selection, and category/product image settings already required by Phase 1. It must not expose an AI Studio, prompt center, generated image/widget/layout/animation workflow, arbitrary code prompt, external design import, AI feature toggle, or future AI permission. No additional UI complexity is justified solely by post-MVP compatibility.

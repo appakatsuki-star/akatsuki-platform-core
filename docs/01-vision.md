@@ -1,5 +1,7 @@
 # Akatsuki Platform Core — Product Vision
 
+> **Long-term product vision, not the current Phase 1 scope.** References to transfers, mobile/partner surfaces, broader modules, or AI describe future platform direction. The proposed first Phase 1 MVP is the narrower provider-backed game top-up path in `docs/00-current-source-of-truth.md`. Transfers/FX, SMM, stock/manual fulfillment, AI execution/AI Builder, mobile apps, and public partner APIs remain postponed unless separately approved.
+
 ## 1. Purpose
 
 Akatsuki Platform Core is a multi-tenant, white-label commerce and digital-services platform. One platform operator manages tenants, shared capabilities, risk, and infrastructure; each tenant operates an isolated branded business; customers interact only with their tenant's catalog, wallet, orders, and support channels.

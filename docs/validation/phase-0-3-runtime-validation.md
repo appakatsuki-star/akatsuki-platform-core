@@ -1,5 +1,7 @@
 # Phase 0.3 — Disposable Runtime Validation Report
 
+> **Disposable validation evidence only.** Node.js `v24.16.0`, validation Docker resources, raw bootstrap migration, fixtures, and header-based tenant resolution were used only to test the foundation. They are not final production version, migration, deployment, or tenant-security decisions and must not be copied into production scaffolding. Production tenant context must come from authenticated memberships, verified domains, scoped credentials, or trusted internal job/event metadata. See `docs/00-current-source-of-truth.md` and the final entry checklist.
+
 **Date:** 2026-07-11
 
 **Status:** Passed, with a migration-runner limitation recorded
