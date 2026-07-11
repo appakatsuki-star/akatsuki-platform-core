@@ -1,0 +1,82 @@
+# API Providers
+
+## Purpose
+
+Define external provider governance and a stable adapter boundary for SMM fulfillment, digital inventory, payments, notifications, and eligible transfer execution. Provider-specific schemas and statuses must not leak into core product rules.
+
+## Main actors
+
+- Super Admin integration operator
+- Tenant Admin and authorized integration Agent
+- Provider adapter and system worker
+- SMM, Digital Products, Payments, Notifications, and Finance/Transfers modules
+- External provider support/operations
+
+## Core flows
+
+1. Super Admin registers a provider definition, category, capabilities, adapter version, and platform approval status.
+2. An authorized admin creates a scoped provider connection and submits credentials through a write-only secret flow.
+3. The system validates connectivity/capabilities without logging secrets.
+4. A module maps internal services/methods to provider capabilities and activates the connection for a tenant.
+5. Runtime calls apply validation, idempotency, timeouts, rate limits, and normalized responses.
+6. Webhooks/polling update internal attempts through adapter translation.
+7. Health monitoring, cost/usage, retries, and reconciliation expose operational status.
+8. Credential rotation, suspension, failover, or retirement follows a controlled audited process.
+
+## Required entities
+
+- ProviderDefinition, ProviderCategory, ProviderCapability
+- AdapterDefinition, AdapterVersion, ProviderConnection
+- EncryptedCredentialReference, CredentialRotation
+- ProviderServiceMapping, ProviderMethodMapping
+- ProviderRequest, ProviderAttempt, NormalizedProviderStatus
+- RateLimitPolicy, HealthCheck, ProviderIncident
+- WebhookEndpoint, WebhookReceipt, ReconciliationCase
+- CostSnapshot, UsageMetric, AuditRecord
+
+## Business rules
+
+- Modules call documented provider ports; they do not embed provider-specific business logic outside adapters.
+- Connection scope is explicit: platform-shared or tenant-owned. Credentials never cross tenants.
+- Secrets are encrypted, write-only to normal UI/API consumers, redacted from logs/jobs, and accessed only at execution time.
+- Provider operations use stable internal references and idempotency when supported; local duplicate suppression remains mandatory.
+- Every call has a timeout, retry classification, bounded attempts, backoff, correlation ID, and sanitized evidence.
+- Provider statuses/errors are mapped to a versioned internal vocabulary; unknown values become reviewable, not guessed.
+- Rate limits, concurrency, and circuit breakers apply per provider and tenant to prevent noisy-neighbor incidents.
+- Retries occur only for classified safe failures. Ambiguous outcomes require inquiry/reconciliation before a new create command.
+- Mapping changes affect new requests only unless a governed migration explicitly handles existing work.
+- Disabling a connection blocks new dispatch while preserving callback, polling, and reconciliation needed for in-flight operations.
+- Provider cost/price snapshots are captured at dispatch for margin and dispute analysis.
+- Adapter promotion requires sandbox/contract evidence and an operational owner.
+
+## Edge cases
+
+- Provider times out after accepting a non-idempotent request.
+- Credentials rotate while jobs are queued or callbacks use an old secret.
+- Provider introduces an unknown status or breaking response without notice.
+- Rate limits are shared across multiple tenants using one platform connection.
+- Provider service mapping changes while orders are pending.
+- Failover sends the same work to two providers.
+- Provider dashboard disagrees with API state or cost.
+- Provider suffers a regional incident or silently degrades quality.
+
+## MVP scope
+
+- A provider registry and one approved adapter for the selected end-to-end order/payment path.
+- Tenant-scoped encrypted connection, connectivity test, explicit service mapping, request/attempt log, health state, and manual disable.
+- Normalized statuses, bounded retries, idempotency safeguards, basic rate limiting, and reconciliation queue.
+- No arbitrary tenant-uploaded adapter code or automatic provider failover.
+
+## Later scope
+
+- Multiple providers per capability, routing by price/quality/capacity, controlled failover, provider scorecards, and automated contract tests.
+- Provider marketplace, self-service credential rotation, cost reconciliation, quotas, and regional routing.
+
+## Open questions
+
+- Which providers and capabilities are approved for launch, and who owns each relationship?
+- Are provider connections platform-shared, tenant-owned, or both for each category?
+- What normalized status and error vocabularies are required per module?
+- What data may each provider receive, and what retention/residency contracts apply?
+- Which providers support idempotency, inquiry, cancellation, refund, and signed webhooks?
+- What health thresholds, SLAs, rate limits, and failover approval rules apply?
