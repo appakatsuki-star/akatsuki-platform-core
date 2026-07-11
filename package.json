@@ -1,5 +1,6 @@
 {
-  "name": "akatsuki-platform-core-validation",
+  "name": "akatsuki-platform-core",
+  "description": "Modular white-label SaaS platform workspace.",
   "private": true,
   "packageManager": "pnpm@11.11.0",
   "scripts": {
