@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  foreignKey,
   index,
   pgEnum,
   pgTable,
@@ -84,6 +85,8 @@ export const roles = pgTable(
     uniqueIndex("roles_tenant_key_unique")
       .on(table.tenantId, table.roleKey)
       .where(sql`${table.scopeType} = 'tenant'`),
+    uniqueIndex("roles_id_tenant_unique").on(table.id, table.tenantId),
+    uniqueIndex("roles_id_scope_unique").on(table.id, table.scopeType),
     check(
       "roles_scope_tenant_consistency",
       sql`(${table.scopeType} = 'platform' AND ${table.tenantId} IS NULL) OR (${table.scopeType} = 'tenant' AND ${table.tenantId} IS NOT NULL)`,
@@ -102,7 +105,10 @@ export const permissions = pgTable(
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (table) => [uniqueIndex("permissions_key_unique").on(table.permissionKey)],
+  (table) => [
+    uniqueIndex("permissions_key_unique").on(table.permissionKey),
+    uniqueIndex("permissions_id_scope_unique").on(table.id, table.scopeType),
+  ],
 );
 
 export const platformRoleAssignments = pgTable(
@@ -110,7 +116,9 @@ export const platformRoleAssignments = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
-    roleId: uuid("role_id").notNull().references(() => roles.id, { onDelete: "restrict" }),
+    roleId: uuid("role_id").notNull(),
+    // Redundant by design so a composite FK can reject tenant-scoped roles here.
+    roleScope: roleScope("role_scope").default("platform").notNull(),
     status: assignmentStatus("status").default("active").notNull(),
     assignedAt: timestamp("assigned_at", { withTimezone: true }).defaultNow().notNull(),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
@@ -123,6 +131,16 @@ export const platformRoleAssignments = pgTable(
       .on(table.userId, table.roleId)
       .where(sql`${table.status} = 'active'`),
     index("platform_role_assignments_user_status_idx").on(table.userId, table.status),
+    foreignKey({
+      columns: [table.roleId, table.roleScope],
+      foreignColumns: [roles.id, roles.scopeType],
+      name: "platform_role_assignments_platform_role_fk",
+    }).onDelete("restrict"),
+    check("platform_role_assignments_scope_check", sql`${table.roleScope} = 'platform'`),
+    check(
+      "platform_role_assignments_revocation_check",
+      sql`(${table.status} = 'active' AND ${table.revokedAt} IS NULL) OR (${table.status} = 'revoked' AND ${table.revokedAt} IS NOT NULL)`,
+    ),
   ],
 );
 
@@ -134,7 +152,7 @@ export const tenantMemberships = pgTable(
     tenantId: uuid("tenant_id").notNull(),
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
     // One tenant role per membership is the approved MVP model.
-    roleId: uuid("role_id").notNull().references(() => roles.id, { onDelete: "restrict" }),
+    roleId: uuid("role_id").notNull(),
     status: membershipStatus("status").default("invited").notNull(),
     invitedAt: timestamp("invited_at", { withTimezone: true }).defaultNow().notNull(),
     activatedAt: timestamp("activated_at", { withTimezone: true }),
@@ -147,6 +165,12 @@ export const tenantMemberships = pgTable(
     uniqueIndex("tenant_memberships_tenant_user_unique").on(table.tenantId, table.userId),
     index("tenant_memberships_tenant_status_idx").on(table.tenantId, table.status),
     index("tenant_memberships_user_status_idx").on(table.userId, table.status),
+    // Enforces both tenant-role scope and same-tenant ownership.
+    foreignKey({
+      columns: [table.roleId, table.tenantId],
+      foreignColumns: [roles.id, roles.tenantId],
+      name: "tenant_memberships_tenant_role_fk",
+    }).onDelete("restrict"),
   ],
 );
 
@@ -154,10 +178,10 @@ export const rolePermissions = pgTable(
   "role_permissions",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    roleId: uuid("role_id").notNull().references(() => roles.id, { onDelete: "restrict" }),
-    permissionId: uuid("permission_id")
-      .notNull()
-      .references(() => permissions.id, { onDelete: "restrict" }),
+    roleId: uuid("role_id").notNull(),
+    permissionId: uuid("permission_id").notNull(),
+    // Redundant by design so role and permission scope must match.
+    scopeType: roleScope("scope_type").notNull(),
     createdAt: createdAt(),
     createdByUserId: uuid("created_by_user_id").references(() => users.id, { onDelete: "restrict" }),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
@@ -167,6 +191,16 @@ export const rolePermissions = pgTable(
       .on(table.roleId, table.permissionId)
       .where(sql`${table.revokedAt} IS NULL`),
     index("role_permissions_permission_idx").on(table.permissionId),
+    foreignKey({
+      columns: [table.roleId, table.scopeType],
+      foreignColumns: [roles.id, roles.scopeType],
+      name: "role_permissions_role_scope_fk",
+    }).onDelete("restrict"),
+    foreignKey({
+      columns: [table.permissionId, table.scopeType],
+      foreignColumns: [permissions.id, permissions.scopeType],
+      name: "role_permissions_permission_scope_fk",
+    }).onDelete("restrict"),
   ],
 );
 
@@ -197,6 +231,10 @@ export const userSessions = pgTable(
     index("user_sessions_user_status_idx").on(table.userId, table.status),
     index("user_sessions_membership_status_idx").on(table.tenantMembershipId, table.status),
     index("user_sessions_expires_at_idx").on(table.expiresAt),
+    check(
+      "user_sessions_revocation_check",
+      sql`(${table.status} = 'revoked' AND ${table.revokedAt} IS NOT NULL) OR (${table.status} <> 'revoked' AND ${table.revokedAt} IS NULL)`,
+    ),
   ],
 );
 
@@ -219,6 +257,10 @@ export const loginAttempts = pgTable(
     index("login_attempts_user_occurred_idx").on(table.userId, table.occurredAt),
     index("login_attempts_email_occurred_idx").on(table.emailFingerprint, table.occurredAt),
     index("login_attempts_ip_occurred_idx").on(table.ipHash, table.occurredAt),
+    check(
+      "login_attempts_failure_reason_check",
+      sql`(${table.outcome} = 'success' AND ${table.failureReason} IS NULL) OR (${table.outcome} <> 'success' AND ${table.failureReason} IS NOT NULL)`,
+    ),
   ],
 );
 
@@ -244,5 +286,9 @@ export const auditActorLinks = pgTable(
     index("audit_actor_links_actor_idx").on(table.actorUserId),
     index("audit_actor_links_subject_idx").on(table.subjectUserId),
     index("audit_actor_links_tenant_idx").on(table.tenantId),
+    check(
+      "audit_actor_links_human_actor_check",
+      sql`${table.actorType} <> 'human' OR ${table.actorUserId} IS NOT NULL`,
+    ),
   ],
 );

@@ -17,6 +17,8 @@ The currently approved responsibility is limited to Auth schema definitions. If 
 
 Auth identity, membership, platform-role assignment, RBAC, session, login-attempt, and Auth-to-audit policy remain owned by the future Auth/identity-access persistence boundary. This package must not become a shared-table dumping ground, own business rules, expose global unscoped repositories, or let callers bypass tenant and platform authorization boundaries.
 
+Schema-level composite foreign keys currently enforce that a tenant membership references a role owned by the same tenant, that platform assignments reference platform-scoped roles, and that role-permission links use matching scopes. These constraints complement rather than replace application authorization and future cross-tenant negative tests.
+
 ## Not implemented or allowed yet
 
 Until a later explicit approval, this package must not contain:
@@ -42,6 +44,6 @@ Until a later explicit approval, this package must not contain:
 
 ## Exact next planned step
 
-**Auth DB schema code review**, under a separate Founder approval.
+**Auth DB migration planning only**, under a separate Founder approval.
 
-That review should verify table/column naming, enum lifecycle values, tenant-aware constraints, indexes, deferred relationships, privacy fields, audit linkage, and migration readiness without generating migrations or running PostgreSQL. Schema changes or migration work require separate approval.
+That documentation-only planning step should define migration ordering, enum/table/constraint creation order, review and checksum rules, forward-fix policy, rollback limits, and required PostgreSQL validation evidence. It must not generate a migration or run PostgreSQL/Docker without another explicit approval.
