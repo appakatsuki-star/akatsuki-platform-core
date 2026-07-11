@@ -78,6 +78,7 @@ The conditional internal MVP document is an inactive template, not authorization
 | Root workspace scaffold | `apps/*`, `packages/*`, `pnpm-workspace.yaml`, `docs/phase-1-foundation/05-root-workspace-scaffold-result.md` | Approved placeholder step only: README-only locations, no apps/packages, dependencies, runtime, or broader Phase 1 GO |
 | Foundation gate/tooling draft | `docs/phase-1-foundation/06-foundation-gate-and-runtime-tooling-decision.md` | Scaffold conformance review passed with conditions; all tooling remains Proposed / Not Installed / Not Approved for Production |
 | Root tooling baseline | `package.json`, `.gitignore`, `docs/phase-1-foundation/07-root-tooling-baseline-result.md` | Metadata/ignore policy only; no dependencies, lockfile, executable tooling, app code, or broader Phase 1 GO |
+| Runtime compatibility matrix | `docs/phase-1-foundation/08-runtime-compatibility-matrix.md` | Version candidates/policies only; Proposed / Not Installed / Not Approved for Production |
 | Phase 1 work items | `docs/phase-1-tickets/` | 46 future tickets; none authorized |
 | Sprint sequence/rules | `docs/phase-1-sprints/` | Sprint 0–10 map, execution rules, stop conditions |
 | Future AI Builder | `docs/future/` | Post-MVP only; no integration or Phase 1 feature |
