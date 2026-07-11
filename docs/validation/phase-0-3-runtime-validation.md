@@ -2,93 +2,88 @@
 
 **Date:** 2026-07-11
 
-**Status:** Partially completed — artifacts created; dependency and PostgreSQL execution blocked by environment
+**Status:** Blocked at PostgreSQL startup; dependencies and TypeScript validation passed
 
-## 1. Scope completed
+## Environment
 
-A disposable pnpm workspace was prepared under `validation/runtime-check/`. It contains:
+| Check | Result |
+|---|---|
+| Node.js | Passed — `v24.16.0` |
+| pnpm | Passed — `11.11.0` |
+| Docker CLI | Passed — `29.6.1` build `8900f1d` |
+| Docker Compose | Passed — `v5.2.0` |
+| npm registry | Passed outside restricted sandbox — `PONG 340ms` |
+| Docker daemon/image operation | Failed — Docker API returned HTTP 500, then daemon connection stalled |
 
-- a minimal Fastify server with `/health`;
-- a tenant-aware `/v1/sample-wallet` route;
-- an `onRequest` tenant-resolution hook separated from the wallet application service;
-- Drizzle schemas for tenants, users, wallets, ledger transactions, ledger entries, and audit logs;
-- tenant-aware composite primary/unique keys and indexes;
-- a reviewed SQL migration sketch with positive-entry and immutability constraints;
-- an atomic sample wallet-credit flow with one debit and one credit;
-- a runtime test intended to verify health, missing tenant context, cross-tenant isolation, derived wallet balance, and balanced entries;
-- Docker Compose configuration for disposable PostgreSQL and `.env.example` only.
+## Commands executed
 
-No production app, UI, product module, `apps/api`, or `apps/web` was created.
-
-## 2. Dependencies declared
-
-Pinned runtime dependencies:
-
-- `fastify@5.6.2`
-- `drizzle-orm@0.44.5`
-- `pg@8.16.3`
-
-Pinned development dependencies:
-
-- `typescript@5.9.3`
-- `tsx@4.20.6`
-- `drizzle-kit@0.31.7`
-- `@types/node@24.10.1`
-- `@types/pg@8.15.6`
-
-The dependencies were declared but **not successfully installed**. `pnpm install` could not resolve `registry.npmjs.org` (`ENOTFOUND`) in the restricted environment and was stopped after retrying. No lockfile was produced.
-
-## 3. Commands
-
-When network access and Docker are available:
-
-```bash
-docker compose up -d validation-postgres
+```text
+pnpm approve-builds
 pnpm install
-DATABASE_URL=postgresql://akatsuki_validation:validation_only@localhost:55432/akatsuki_validation pnpm validation:migrate
-DATABASE_URL=postgresql://akatsuki_validation:validation_only@localhost:55432/akatsuki_validation pnpm validation:check
-DATABASE_URL=postgresql://akatsuki_validation:validation_only@localhost:55432/akatsuki_validation pnpm validation:test
-DATABASE_URL=postgresql://akatsuki_validation:validation_only@localhost:55432/akatsuki_validation pnpm validation:start
-curl http://127.0.0.1:3100/health
-curl -H 'x-tenant-slug: demo' http://127.0.0.1:3100/v1/sample-wallet
+docker compose up -d validation-postgres
+docker image inspect postgres:17-alpine
+docker compose ps
+pnpm validation:check
+pnpm validation:migrate
 ```
 
-The migration is intentionally one-use. Re-running it against the same database will fail because objects already exist; recreate the disposable volume for a clean run.
+`pnpm approve-builds` reported that no packages were awaiting approval. `pnpm install` completed successfully and verified the dependency lock state. The runtime-check scripts were inspected and are:
 
-## 4. What worked
+- `check`: `tsc --noEmit`
+- `migrate`: `tsx src/migrate.ts`
+- `test`: `tsx src/runtime.test.ts`
+- `start`: `tsx src/start.ts`
 
-- The isolated workspace and required validation artifacts were created.
-- Fastify HTTP concerns and the fake application service are separated by a plain TypeScript interface.
-- Tenant-owned schema records include `tenant_id`; composite keys/indexes keep tenant scope visible.
-- The sample wallet has no balance column. Its balance is derived from immutable ledger entries.
-- The credit flow writes a draft transaction, equal debit/credit entries, validates totals, posts the transaction, and writes an audit record inside one database transaction.
-- The intended commands and disposable PostgreSQL service are documented.
+The requested Compose service is named `validation-postgres` in the existing file; there is no `postgres` service.
 
-These are static/code-review conclusions only, not runtime pass results.
+## Results
 
-## 5. What failed or was not run
+### Dependencies and TypeScript
 
-- `pnpm install` failed because npm registry DNS/network access was unavailable.
-- Docker/Docker Compose is not installed or not available in the current environment.
-- TypeScript compilation did not run because dependencies were unavailable.
-- PostgreSQL migration, server startup, health request, tenant-isolation test, ledger transaction, and rollback behavior did not run.
-- Drizzle Kit generation was not used; the SQL migration was kept explicit for this disposable check.
+Passed. `pnpm install` exited successfully. `pnpm validation:check` ran `tsc --noEmit` with no errors.
 
-The failed pnpm attempt created an untracked root `.pnpm-store/` cache. It is not a project artifact and should be removed or ignored before committing; it was not deleted automatically because the user requested report completion only.
+### PostgreSQL
 
-## 6. Risks remaining
+Failed to start. `docker compose up -d validation-postgres` attempted to pull/start `postgres:17-alpine`, but Docker returned:
 
-- Type/API mismatches may remain until the pinned dependencies compile together.
-- The SQL migration must be tested against PostgreSQL 17 and compared with Drizzle's generated output.
-- Ledger balance validation currently occurs in the application transaction; a tested deferred database constraint/trigger remains future work.
-- The immutability trigger and cleanup/test behavior need real execution and concurrency tests.
-- Header-based tenant resolution is validation-only. Production tenancy must come from authenticated membership, verified domain, or scoped credentials.
-- Repository-level tenant isolation needs broader negative tests and future RLS validation.
-- The ledger account model is deliberately simplified and still requires accounting review.
-- Node.js 24 was present locally, but the supported production LTS and exact dependency versions still require approval.
+```text
+request returned 500 Internal Server Error for API route ... /images/create
+```
 
-## 7. Recommendation
+A subsequent image inspection/Compose status operation stalled while connecting to the Docker socket and had to be interrupted. No PostgreSQL container was listed as running.
 
-**Do not mark Phase 0.3 as runtime-validated and do not start Phase 1 yet.** The disposable implementation shape is ready for execution, but none of the actual dependency/PostgreSQL checks passed because the required environment was unavailable.
+### Migration/schema
 
-Next, run the documented commands in an environment with npm registry access and Docker, fix any compile/migration/runtime failures, and record the exact output. Proceed to Phase 1 only after TypeScript passes and the health, tenant-isolation, balanced-credit, immutability, idempotency, and rollback tests execute successfully.
+Failed because PostgreSQL was not listening. The first sandboxed attempt also showed a local `tsx` IPC `EPERM`; rerunning with approved execution successfully launched `tsx` and reached the PostgreSQL client, which then failed with `ECONNREFUSED` on both `::1:55432` and `127.0.0.1:55432`. Therefore the SQL migration and database schema/constraints were not applied or validated.
+
+### Runtime tests
+
+Not run. The existing test requires the migrated PostgreSQL database. Running it without the database would only repeat the confirmed connection failure and would not provide validation evidence.
+
+### Fastify server and health route
+
+Not started. The current validation server initializes its PostgreSQL pool during startup, so `/health` could not be tested without the database. No successful health response was recorded.
+
+### Tenant-aware route
+
+Not tested. `/v1/sample-wallet` requires tenant fixtures, the migrated schema, and the balanced ledger credit flow. No successful tenant route response was recorded.
+
+## Errors and remaining risks
+
+- Docker Desktop/daemon is unhealthy or incompatible at its current API/socket state despite the CLI being installed.
+- PostgreSQL 17 migration compatibility, constraints, immutability, transactions, rollback, idempotency, and concurrency remain untested.
+- The health endpoint is coupled to startup database initialization in this disposable check, so it cannot demonstrate liveness while PostgreSQL is unavailable.
+- Tenant repository isolation and future PostgreSQL RLS still require real integration tests.
+- Ledger semantics require accounting review.
+- Node.js 24 was used; the production-supported Node LTS is still an explicit decision.
+
+## Recommendation
+
+**Phase 1 remains blocked.** Restart or repair Docker Desktop/daemon until both commands below complete promptly and successfully:
+
+```text
+docker image inspect postgres:17-alpine
+docker compose up -d validation-postgres
+```
+
+Then confirm the container is healthy and run, in order: `pnpm validation:migrate`, `pnpm validation:test`, `pnpm validation:start`, `/health`, and `/v1/sample-wallet`. Do not authorize Phase 1 until migration, health, tenant isolation, and balanced ledger tests pass with recorded output.
