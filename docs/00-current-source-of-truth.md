@@ -89,6 +89,7 @@ The conditional internal MVP document is an inactive template, not authorization
 | Auth DB schema review | `docs/phase-1-auth/07-auth-db-schema-code-review-result.md` | Review passed with scope/tenant relationship hardening; PostgreSQL/DDL validation remains deferred and no migration/runtime work is approved |
 | Auth DB migration planning | `docs/phase-1-auth/08-auth-db-migration-planning.md` | Documentation-only ordering, constraint, tooling, rollback, and future validation plan; no migration, SQL generation, Drizzle Kit, connection, or PostgreSQL runtime |
 | Drizzle migration tooling plan | `docs/phase-1-auth/09-drizzle-migration-tooling-plan.md` | Documentation-only config/output/version/command/safety-gate plan; next step is separately approved Drizzle Kit installation only, not generation or execution |
+| Super Admin foundation | `docs/phase-1-super-admin/01-super-admin-foundation-plan.md` | Documentation-only owner/control-layer, Main Website, Tenant Admin, and Storefront boundaries; DB/migration path paused and next step is Super Admin backend contracts only |
 | Phase 1 work items | `docs/phase-1-tickets/` | 46 future tickets; none authorized |
 | Sprint sequence/rules | `docs/phase-1-sprints/` | Sprint 0–10 map, execution rules, stop conditions |
 | Future AI Builder | `docs/future/` | Post-MVP only; no integration or Phase 1 feature |
