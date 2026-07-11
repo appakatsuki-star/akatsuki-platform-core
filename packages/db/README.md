@@ -2,13 +2,13 @@
 
 ## Status
 
-**Scaffold only.** This package currently contains metadata and boundary documentation. It has no executable source, exports, dependencies, scripts, schema, migrations, database connection, or runtime behavior.
+**Auth schema definitions only.** This package contains typed Drizzle PostgreSQL definitions for the approved Auth entities. It still has no database connection, migrations, runtime queries, repositories, Auth behavior, or production configuration.
 
-Creating this directory does not approve database infrastructure, PostgreSQL, Drizzle, Auth implementation, or any broader Phase 1 work.
+These definitions describe future database structure; they do not create tables or connect to a database. Their presence does not approve database infrastructure, migrations, Auth runtime implementation, or broader Phase 1 work.
 
 ## Future responsibility
 
-If separately approved, `@akatsuki/db` may provide narrow shared technical database infrastructure such as:
+The currently approved responsibility is limited to Auth schema definitions. If separately approved later, `@akatsuki/db` may also provide narrow shared technical database infrastructure such as:
 
 - approved connection and transaction primitives;
 - approved migration-runner integration and technical conventions;
@@ -21,27 +21,27 @@ Auth identity, membership, platform-role assignment, RBAC, session, login-attemp
 
 Until a later explicit approval, this package must not contain:
 
-- Drizzle ORM or Drizzle Kit dependencies/configuration;
+- Drizzle Kit or migration configuration;
 - PostgreSQL or other database drivers;
 - database connection, pool, transaction, query, repository, or runtime code;
-- schema/table definitions, including users, memberships, roles, permissions, sessions, login attempts, or audit relationships;
 - generated or handwritten migrations, a migration journal, seed data, or fixtures;
 - Docker/database runtime configuration;
 - authentication, password hashing, session tokens/cookies, routes, or application code;
 - provider, wallet, ledger, order, payment, frontend, UI, or AI code;
 - credentials, connection strings, production users/data, or secrets.
 
-No `src/` directory or `index.ts` is present because this scaffold has no approved executable API.
+`src/index.ts` exports schema metadata only. It performs no connection, query, migration, or other runtime side effect.
 
 ## Dependency and workspace state
 
-- `package.json` intentionally has no `dependencies` or `devDependencies`.
-- It intentionally has no scripts requiring unavailable tooling.
+- `drizzle-orm@0.44.5` is the only package dependency and is used only for PostgreSQL schema definitions.
+- The only package script is a TypeScript typecheck.
+- The typecheck temporarily reuses the workspace's already installed API TypeScript tool; adding a direct TypeScript development dependency requires separate tooling approval.
 - The existing `packages/*` workspace pattern already includes this package.
 - Creating the scaffold must not require `pnpm install` or change `pnpm-lock.yaml`.
 
 ## Exact next planned step
 
-**Auth DB schema implementation planning**, under a separate Founder approval.
+**Auth DB schema code review**, under a separate Founder approval.
 
-That planning step should translate the approved Auth concept into a non-executable database schema plan: ownership, entities, keys, tenant-aware relationships, uniqueness, lifecycle constraints, indexes, retention, audit coupling, and negative tests. Auth schema code may begin only after that plan and its required Security, Legal/Privacy, Architecture/Database, and ADR decisions are approved.
+That review should verify table/column naming, enum lifecycle values, tenant-aware constraints, indexes, deferred relationships, privacy fields, audit linkage, and migration readiness without generating migrations or running PostgreSQL. Schema changes or migration work require separate approval.

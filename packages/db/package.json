@@ -3,5 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Scaffold for future shared database infrastructure and Auth persistence integration boundaries."
+  "description": "Drizzle PostgreSQL Auth schema definitions and future database persistence boundaries.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema/auth": "./src/schema/auth.ts"
+  },
+  "scripts": {
+    "typecheck": "pnpm --filter @akatsuki/api exec tsc --noEmit -p ../../packages/db/tsconfig.json"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.44.5"
+  }
 }

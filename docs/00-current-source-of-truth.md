@@ -85,6 +85,7 @@ The conditional internal MVP document is an inactive template, not authorization
 | Auth/database entry | `docs/phase-1-foundation/12-auth-database-entry-plan.md` | Recommends Auth schema planning only; no database, migration, Drizzle, auth code, Docker, or implementation approval |
 | Auth schema planning and gate | `docs/phase-1-auth/` | Second gate is **PASS** for one next step only: separately authorized DB package scaffold; no package, database/schema, migration, Drizzle, or Auth implementation is approved by the gate |
 | DB package scaffold | `packages/db/`, `docs/phase-1-auth/05-db-package-scaffold-result.md` | Metadata/README-only `@akatsuki/db` boundary; no source, dependencies, exports, Drizzle, schema, migrations, connection, or Auth implementation |
+| Auth DB schema code | `packages/db/src/schema/auth.ts`, `docs/phase-1-auth/06-auth-db-schema-code-result.md` | Drizzle PostgreSQL definitions only; no connection, SQL/migration generation, runtime Auth, real users, or secrets |
 | Phase 1 work items | `docs/phase-1-tickets/` | 46 future tickets; none authorized |
 | Sprint sequence/rules | `docs/phase-1-sprints/` | Sprint 0–10 map, execution rules, stop conditions |
 | Future AI Builder | `docs/future/` | Post-MVP only; no integration or Phase 1 feature |

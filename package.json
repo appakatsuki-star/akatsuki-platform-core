@@ -9,6 +9,7 @@
     "api:start": "pnpm --filter @akatsuki/api start",
     "api:test": "pnpm --filter @akatsuki/api test",
     "api:typecheck": "pnpm --filter @akatsuki/api typecheck",
+    "db:typecheck": "pnpm --filter @akatsuki/db typecheck",
     "validation:check": "pnpm --filter @akatsuki/runtime-check check",
     "validation:test": "pnpm --filter @akatsuki/runtime-check test",
     "validation:start": "pnpm --filter @akatsuki/runtime-check start",
