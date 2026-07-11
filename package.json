@@ -1,0 +1,11 @@
+{
+  "name": "akatsuki-platform-core-validation",
+  "private": true,
+  "packageManager": "pnpm@11.11.0",
+  "scripts": {
+    "validation:check": "pnpm --filter @akatsuki/runtime-check check",
+    "validation:test": "pnpm --filter @akatsuki/runtime-check test",
+    "validation:start": "pnpm --filter @akatsuki/runtime-check start",
+    "validation:migrate": "pnpm --filter @akatsuki/runtime-check migrate"
+  }
+}
