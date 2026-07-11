@@ -38,6 +38,21 @@ describe("request IDs", () => {
     expect(isSafeRequestId(generated)).toBe(true);
   });
 
+  it("replaces an oversized request ID", async () => {
+    shell = await buildApp({ logSink: () => undefined });
+    const oversized = "a".repeat(129);
+
+    const response = await shell.app.inject({
+      method: "GET",
+      url: "/health/live",
+      headers: { "x-request-id": oversized },
+    });
+
+    const generated = String(response.headers["x-request-id"]);
+    expect(generated).not.toBe(oversized);
+    expect(isSafeRequestId(generated)).toBe(true);
+  });
+
   it("does not create authority from client context headers", async () => {
     shell = await buildApp({ logSink: () => undefined });
 

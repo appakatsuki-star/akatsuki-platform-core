@@ -16,6 +16,21 @@ const SAFE_KEYS = new Set([
   "route",
   "status_code",
 ]);
+const SAFE_EVENT = /^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$/;
+const SAFE_LOG_STRING = /^[\x20-\x7E]*$/;
+const MAX_LOG_STRING_LENGTH = 256;
+
+function isSafeLogValue(
+  value: unknown,
+): value is string | number | boolean {
+  if (typeof value === "string") {
+    return (
+      value.length <= MAX_LOG_STRING_LENGTH && SAFE_LOG_STRING.test(value)
+    );
+  }
+
+  return typeof value === "number" || typeof value === "boolean";
+}
 
 function safeRecord(
   level: string,
@@ -27,7 +42,11 @@ function safeRecord(
   }
 
   const source = input as Record<string, unknown>;
-  if (typeof source.event !== "string") {
+  if (
+    typeof source.event !== "string" ||
+    source.event.length > 64 ||
+    !SAFE_EVENT.test(source.event)
+  ) {
     return undefined;
   }
 
@@ -39,9 +58,7 @@ function safeRecord(
   for (const [key, value] of Object.entries(source)) {
     if (
       SAFE_KEYS.has(key) &&
-      (typeof value === "string" ||
-        typeof value === "number" ||
-        typeof value === "boolean")
+      isSafeLogValue(value)
     ) {
       result[key] = value;
     }
@@ -80,9 +97,7 @@ export function createSafeLogger(
       for (const [key, value] of Object.entries(childBindings)) {
         if (
           SAFE_KEYS.has(key) &&
-          (typeof value === "string" ||
-            typeof value === "number" ||
-            typeof value === "boolean")
+          isSafeLogValue(value)
         ) {
           safeBindings[key] = value;
         }
