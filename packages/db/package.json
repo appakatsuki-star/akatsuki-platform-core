@@ -1,0 +1,7 @@
+{
+  "name": "@akatsuki/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Scaffold for future shared database infrastructure and Auth persistence integration boundaries."
+}
