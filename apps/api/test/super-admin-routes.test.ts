@@ -12,11 +12,11 @@ const safeTenantId = "123e4567-e89b-12d3-a456-426614174000";
 
 describe("Super Admin read-only skeleton routes", () => {
   it.each([
-    ["/super-admin/dashboard", "dashboard"],
-    ["/super-admin/tenants", "tenants"],
-    [`/super-admin/tenants/${safeTenantId}`, "tenant_detail"],
-    ["/super-admin/site-content", "site_content"],
-  ])("returns the safe skeleton for %s", async (url, resource) => {
+    ["/super-admin/dashboard", "dashboard", {}],
+    ["/super-admin/tenants", "tenants", { items: [] }],
+    [`/super-admin/tenants/${safeTenantId}`, "tenant_detail", { tenant_id: safeTenantId }],
+    ["/super-admin/site-content", "site_content", { sections: [] }],
+  ])("returns the exact safe skeleton for %s", async (url, resource, extension) => {
     shell = await buildApp({ logSink: () => undefined });
 
     const response = await shell.app.inject({
@@ -29,11 +29,15 @@ describe("Super Admin read-only skeleton routes", () => {
     expect(response.statusCode).toBe(200);
     expect(response.headers["x-request-id"]).toBe(`skeleton-${resource}`);
     expect(body.request_id).toBe(`skeleton-${resource}`);
-    expect(body.data).toMatchObject({
-      area: "super_admin",
-      resource,
-      status: "not_connected",
-      implementation: "skeleton_only",
+    expect(body).toEqual({
+      request_id: `skeleton-${resource}`,
+      data: {
+        area: "super_admin",
+        resource,
+        status: "not_connected",
+        implementation: "skeleton_only",
+        ...extension,
+      },
     });
   });
 
@@ -80,6 +84,41 @@ describe("Super Admin read-only skeleton routes", () => {
     });
     expect(response.body).not.toContain(invalidTenantId);
     expect(response.body).not.toContain("stack");
+  });
+
+  it.each([
+    "00000000-0000-0000-0000-000000000000",
+    "123E4567-E89B-12D3-A456-426614174000",
+    "123e4567-e89b-12d3-7456-426614174000",
+    "123e4567-e89b-92d3-a456-426614174000",
+  ])("rejects a non-canonical tenant ID without echoing it", async (tenantId) => {
+    shell = await buildApp({ logSink: () => undefined });
+
+    const response = await shell.app.inject({
+      method: "GET",
+      url: `/super-admin/tenants/${tenantId}`,
+    });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.json().error.code).toBe("VALIDATION_ERROR");
+    expect(response.body).not.toContain(tenantId);
+  });
+
+  it("does not derive authority or content from client headers", async () => {
+    shell = await buildApp({ logSink: () => undefined });
+
+    const response = await shell.app.inject({
+      method: "GET",
+      url: "/super-admin/dashboard",
+      headers: {
+        "x-tenant-id": "header-tenant-secret",
+        "x-role": "super-admin-secret",
+      },
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).not.toContain("header-tenant-secret");
+    expect(response.body).not.toContain("super-admin-secret");
   });
 
   it("does not expose sensitive, connected, or production data", async () => {
