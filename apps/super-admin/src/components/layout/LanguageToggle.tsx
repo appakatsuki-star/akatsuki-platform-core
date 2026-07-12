@@ -1,0 +1,2 @@
+import { pick,ui,type AdminLocale } from "../../localization/admin-translations";
+export default function LanguageToggle({locale,onToggle}:{locale:AdminLocale;onToggle:()=>void}){return <button className="topbar-icon preference-toggle language-toggle" type="button" onClick={onToggle} aria-label={pick(locale==="ar"?ui.switchEnglish:ui.switchArabic,locale)} title={pick(locale==="ar"?ui.switchEnglish:ui.switchArabic,locale)}>{locale==="ar"?"EN":"AR"}</button>}

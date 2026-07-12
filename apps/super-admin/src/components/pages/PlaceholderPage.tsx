@@ -1,0 +1,3 @@
+import { pick,ui,type AdminLocale } from "../../localization/admin-translations";
+import type { AdminNavItem } from "../../navigation/admin-navigation";
+export default function PlaceholderPage({item,locale,onNavigate}:{item:AdminNavItem;locale:AdminLocale;onNavigate:(id:string)=>void}){return <article className="workspace-placeholder"><div className="placeholder-icon">{item.icon}</div><span className="development-badge">{pick(ui.development,locale)}</span><h2>{pick(item.title,locale)}</h2><p>{pick(item.description,locale)}</p>{item.action&&<button className="workspace-primary" type="button" onClick={()=>item.id==="create-account"&&onNavigate("dashboard")}>＋ {pick(item.action,locale)}</button>}</article>}

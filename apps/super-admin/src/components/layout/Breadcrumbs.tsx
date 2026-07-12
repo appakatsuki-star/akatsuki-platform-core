@@ -1,0 +1,2 @@
+import { pick,type AdminLocale,type LocalizedText } from "../../localization/admin-translations";
+export default function Breadcrumbs({items,locale}:{items:LocalizedText[];locale:AdminLocale}){return <div className="breadcrumbs" aria-label={locale==="ar"?"مسار الصفحة":"Breadcrumbs"}>{items.map((entry,index)=><span key={`${entry.ar}-${index}`}>{index>0&&<i aria-hidden="true">{locale==="ar"?"‹":"›"}</i>}{pick(entry,locale)}</span>)}</div>}

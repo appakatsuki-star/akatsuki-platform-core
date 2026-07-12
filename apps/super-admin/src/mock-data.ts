@@ -38,3 +38,40 @@ export const modules = [
   { name: "الحوالات", icon: "RE", description: "التحويلات والتسويات عبر الحدود.", status: "معطل" },
   { name: "الدعم", icon: "SU", description: "مساحة دعم المتاجر والعملاء.", status: "نشط" },
 ] as const;
+
+// UI-only Super Admin shell data. No value is loaded from a backend.
+export const dashboardSummary=[
+  {label:"العملاء",value:"18",note:"3 جدد هذا الشهر",icon:"◇",tone:"red"},
+  {label:"المشاريع",value:"26",note:"5 قيد التنفيذ",icon:"▦",tone:"crimson"},
+  {label:"المواقع النشطة",value:"14",note:"جميعها مستقرة",icon:"◎",tone:"green"},
+  {label:"المهام المعلقة",value:"7",note:"2 بأولوية عالية",icon:"◴",tone:"amber"},
+] as const;
+
+export const adminActivity=[
+  {title:"تم إنشاء مشروع جديد",detail:"مشروع Atlas · منذ 12 دقيقة",tone:"red"},
+  {title:"اكتمل نشر موقع العميل",detail:"Nexus Commerce · منذ 38 دقيقة",tone:"green"},
+  {title:"تذكرة دعم بانتظار المراجعة",detail:"أولوية متوسطة · منذ ساعة",tone:"amber"},
+  {title:"تم تجديد دومين",detail:"vertex.example · منذ ساعتين",tone:"crimson"},
+] as const;
+
+export const quickActions=[
+  {label:"إنشاء مشروع",icon:"＋",target:"project-create"},
+  {label:"إضافة عميل",icon:"◇",target:"clients"},
+  {label:"مراجعة التذاكر",icon:"◌",target:"tickets"},
+  {label:"حالة النظام",icon:"◉",target:"system-health"},
+] as const;
+
+export const mockNotifications=[
+  {title:"مشروع جديد بانتظار المراجعة",time:"منذ 8 دقائق",icon:"▦"},
+  {title:"دومين سينتهي قريبًا",time:"خلال 7 أيام",icon:"◎"},
+  {title:"فشل آخر Deployment",time:"منذ 42 دقيقة",icon:"↗"},
+  {title:"تذكرة دعم جديدة",time:"منذ ساعة",icon:"◌"},
+] as const;
+
+export const mockSearchResults=[
+  {label:"مشروع Atlas",type:"مشروع",target:"projects"},
+  {label:"شركة Nexus",type:"عميل",target:"clients"},
+  {label:"vertex.example",type:"دومين",target:"domains"},
+  {label:"استضافة الإنتاج",type:"استضافة",target:"hosting"},
+  {label:"فاتورة AK-1042",type:"فاتورة",target:"invoices"},
+] as const;

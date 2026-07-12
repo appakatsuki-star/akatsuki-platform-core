@@ -1,0 +1,1 @@
+export default function AnimatedNavigationIndicator({top,height,visible}:{top:number;height:number;visible:boolean}){return <span className="active-navigation-indicator" aria-hidden="true" style={{height,transform:`translateY(${top}px)`,opacity:visible?1:0}}/>}

@@ -1,0 +1,5 @@
+import { mockNotifications } from "../../mock-data";
+import { pick,ui,type AdminLocale } from "../../localization/admin-translations";
+const en=["Project awaiting review","Domain expires soon","Latest deployment failed","New support ticket"];
+const times=["8 minutes ago","Within 7 days","42 minutes ago","One hour ago"];
+export default function NotificationMenu({open,locale,onToggle}:{open:boolean;locale:AdminLocale;onToggle:()=>void}){return <div className="topbar-menu-wrap"><button className="topbar-icon" type="button" aria-label={pick(ui.notifications,locale)} aria-expanded={open} onClick={onToggle}>♢<i/></button>{open&&<div className="topbar-dropdown notification-dropdown"><header><strong>{pick(ui.notifications,locale)}</strong><span>{pick(ui.newNotifications,locale)}</span></header>{mockNotifications.map((entry,index)=><button type="button" key={entry.title}><i>{entry.icon}</i><div><strong>{locale==="ar"?entry.title:en[index]}</strong><span>{locale==="ar"?entry.time:times[index]}</span></div></button>)}<button type="button" className="dropdown-footer">{pick(ui.allNotifications,locale)}</button></div>}</div>}
