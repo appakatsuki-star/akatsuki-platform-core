@@ -3,4 +3,7 @@ packages:
   - packages/*
   - validation/*
 
+allowBuilds:
+  esbuild: true
+
 onlyBuiltDependencies: []
