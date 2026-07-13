@@ -1,0 +1,3 @@
+import type { AdminLocale } from "../../localization/admin-translations";
+const steps=[{ar:"نوع المشروع",en:"Type"},{ar:"العميل",en:"Client"},{ar:"الهوية",en:"Identity"},{ar:"القالب",en:"Template"},{ar:"الوحدات",en:"Modules"},{ar:"المنصات",en:"Delivery"},{ar:"المراجعة",en:"Review"}];
+export default function ProjectWizardProgress({step,locale}:{step:number;locale:AdminLocale}){return <nav className="wizard-progress" aria-label={locale==="ar"?"تقدم إنشاء المشروع":"Project creation progress"}>{steps.map((item,index)=><div className={`${index+1===step?"active":""} ${index+1<step?"complete":""}`} key={item.en}><i>{index+1<step?"✓":index+1}</i><span>{locale==="ar"?item.ar:item.en}</span></div>)}</nav>}

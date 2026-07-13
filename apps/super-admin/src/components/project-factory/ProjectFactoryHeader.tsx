@@ -1,0 +1,2 @@
+import type { AdminLocale } from "../../localization/admin-translations";
+export default function ProjectFactoryHeader({locale,onCreate}:{locale:AdminLocale;onCreate:()=>void}){return <header className="factory-hero"><div><span>AKATSUKI / PROJECT FACTORY</span><h2>{locale==="ar"?"مصنع المشاريع":"Project Factory"}</h2><p>{locale==="ar"?"إنشاء منصات العملاء وتهيئتها وتجهيزها للتسليم.":"Create, configure and deliver client platforms."}</p></div><button type="button" onClick={onCreate}>＋ {locale==="ar"?"إنشاء مشروع":"Create Project"}</button></header>}

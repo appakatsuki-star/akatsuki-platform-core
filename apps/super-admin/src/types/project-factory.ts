@@ -1,0 +1,3 @@
+export type ProjectStatus="draft"|"active"|"review"|"attention";
+export interface FactoryProject{id:string;name:string;client:string;type:string;template:string;status:ProjectStatus;domain:string;created:string;updated:string;owner:string;platforms:string[]}
+export interface ProjectDraft{type:string;clientName:string;businessName:string;email:string;phone:string;country:string;language:string;notes:string;name:string;slug:string;primary:string;secondary:string;accent:string;theme:string;arabic:boolean;english:boolean;rtl:boolean;description:string;template:string;modules:string[];platforms:string[];domainMode:string;domain:string;region:string;deliveryNotes:string}
