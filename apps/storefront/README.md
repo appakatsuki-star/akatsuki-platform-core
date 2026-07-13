@@ -1,11 +1,5 @@
-# Storefront Application Placeholder
+# Platform Store
 
-**Status:** Placeholder only. No production code or dependencies exist yet.
+Frontend-only digital commerce storefront for Phase 3.0. It uses centralized mock data and browser-local mock state. It does not connect to an API, database, payment gateway, provider, OAuth, WhatsApp, or OTP service.
 
-## Future responsibility
-
-This app will be the separate tenant customer storefront. After separate approval, it may present a safely resolved tenant's published catalog and customer order experience through the approved API.
-
-## Not allowed yet
-
-No source directory, frontend framework, page, component, login, catalog, PUBG package, Player ID form, wallet/order UI, API client, server secret, dependency, build configuration, or runtime command may be added under the current approval.
+The application reuses the workspace's existing React, TypeScript, and Vite versions. No new dependency or package version was introduced.

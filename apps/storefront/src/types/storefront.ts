@@ -1,0 +1,14 @@
+export type Locale = "ar" | "en";
+export type Theme = "dark" | "light" | "system";
+export type Route = { path: string; params: Record<string, string>; query: URLSearchParams };
+export type Category = { id: string; slug: string; name: Record<Locale, string>; description: Record<Locale, string>; icon: string; count: number };
+export type Collection = { id: string; categoryId: string; slug: string; name: Record<Locale, string>; description: Record<Locale, string> };
+export type ProductField = { id: string; label: Record<Locale, string>; type: "text" | "number" | "select" | "email" | "tel"; required: boolean; placeholder?: Record<Locale, string>; options?: string[]; pattern?: string };
+export type ProductVariant = { id: string; name: string; price: number; oldPrice?: number };
+export type Product = { id: string; slug: string; categoryId: string; collectionId: string; name: Record<Locale, string>; description: Record<Locale, string>; visual: string; execution: "auto" | "manual"; eta: string; available: boolean; featured?: boolean; recent?: boolean; variants: ProductVariant[]; fields: ProductField[] };
+export type Transaction = { id: string; type: "deposit" | "purchase" | "refund"; amount: number; status: "completed" | "pending" | "rejected"; date: string; orderId?: string; reason?: string };
+export type OrderStatus = "pending" | "processing" | "completed" | "rejected" | "cancelled";
+export type Order = { id: string; productId: string; variant: string; price: number; status: OrderStatus; createdAt: string; execution: "auto" | "manual"; fields: Record<string, string>; result?: string };
+export type Notice = { id: string; type: "order" | "wallet" | "support" | "offers" | "system"; title: Record<Locale, string>; body: Record<Locale, string>; date: string; read: boolean; link?: string };
+export type Ticket = { id: string; category: string; subject: string; status: "open" | "closed"; createdAt: string; related?: string; messages: { id: string; author: "user" | "support"; text: string; date: string }[] };
+export type SessionState = { loggedIn: boolean; balance: number; favorites: string[]; orders: Order[]; transactions: Transaction[]; notices: Notice[]; tickets: Ticket[] };
