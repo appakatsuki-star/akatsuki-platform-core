@@ -52,6 +52,31 @@ importers:
         specifier: 8.1.4
         version: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(tsx@4.23.0)
 
+  apps/storefront:
+    dependencies:
+      react:
+        specifier: 19.2.4
+        version: 19.2.4
+      react-dom:
+        specifier: 19.2.4
+        version: 19.2.4(react@19.2.4)
+    devDependencies:
+      '@types/react':
+        specifier: 19.2.14
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: 6.0.1
+        version: 6.0.1(vite@8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(tsx@4.23.0))
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: 8.1.4
+        version: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)(tsx@4.23.0)
+
   packages/db:
     dependencies:
       drizzle-orm:

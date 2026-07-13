@@ -5,8 +5,9 @@ import { NotificationsPage, NewTicketPage, ProfilePage, SettingsPage, SupportPag
 import { SystemPage } from "./pages/AuthSystemPages";
 import { AuthExperience } from "./components/auth/AuthExperience";
 import { AuthFlow } from "./components/auth/AuthFlow";
+import { PremiumHomePage as HomePage } from "./components/home/PremiumHome";
 import { CheckoutPage, DepositPage, OrderPage, OrdersPage, WalletPage } from "./pages/CommercePages";
-import { CategoriesPage, CategoryPage, FavoritesPage, HomePage, NotFoundPage, OffersPage, ProductPage, SearchPage, StaticPage } from "./pages/PublicPages";
+import { CategoriesPage, CategoryPage, FavoritesPage, NotFoundPage, OffersPage, ProductPage, SearchPage, StaticPage } from "./pages/PublicPages";
 
 const bare = new Set(["/login", "/register", "/verify", "/forgot-password", "/maintenance", "/offline", "/unauthorized", "/error"]);
 export default function App() { const route = useRoute(); let page: React.ReactNode;

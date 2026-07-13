@@ -1,0 +1,6 @@
+export type LocalizedText = { ar: string; en: string };
+export type HomeSectionType = "hero" | "search" | "greeting" | "quick-actions" | "categories" | "best-sellers" | "featured-collection" | "product-section" | "trending" | "offers" | "recently-added" | "wallet" | "payment-methods" | "benefits" | "support";
+export type HomeSectionConfig = { id: string; type: HomeSectionType; enabled: boolean; order: number; title?: LocalizedText; subtitle?: LocalizedText; layout?: string; dataSource?: string };
+export type HomeCategory = { id: string; slug: string; icon: string; name: LocalizedText; description: LocalizedText; count: number };
+export type HomeProduct = { id: string; slug: string; categoryId: string; title: LocalizedText; subtitle: LocalizedText; startingPrice: number; oldPrice?: number; currency: string; executionType: "automatic" | "manual"; deliveryTime: LocalizedText; availability: "available" | "limited" | "out"; popularity: number; discount?: number; visualVariant: string; featured?: boolean; bestSeller?: boolean; recentlyAdded?: boolean };
+export type HomeHeroSlide = { id: string; eyebrow: LocalizedText; title: LocalizedText; description: LocalizedText; primary: LocalizedText; secondary?: LocalizedText; path: string; visual: string; metric: LocalizedText };
